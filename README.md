@@ -88,4 +88,24 @@ Examples of Output Being Logged:
 
 # Smart-Script-Generation
 
-(Writing in progress)
+With smart script generation, you won't need to rewrite variables for creating the admin and bot scripts. Instead you only need to run commands in the Botnet. To generate the Bot-Script, type in '!genscript' and type '!genadminscript' to generate the admin script. These will generate the scripts with many of the configured settings from the option parsing, so that there would be a lack of errors with the scripts. Important variables imported into both scripts would include the Botnet IP and Port, as well as the admin username and password for the admins, and the encryption key for the Bots. 
+
+Smart-Script-Generation For Admin Scripts:
+
+![smrtadmin](/ex12.png)
+
+Smart-Script-Generation For Bot Scripts:
+
+![smrtbot](/ex11.png)
+
+# Extra Notes
+
+This script was made for educational uses only! 
+
+Do not use this script for malicious uses.
+
+Any Damage caused by this script from other people will not be my fault.
+
+Please do not copy this script and say that it is yours. 
+
+If you plan to modify this script in anyway, please credit me.
