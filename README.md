@@ -109,3 +109,7 @@ Any Damage caused by this script from other people will not be my fault.
 Please do not copy this script and say that it is yours. 
 
 If you plan to modify this script in anyway, please credit me.
+
+Happy Hacking,
+
+DrSquid
