@@ -26,6 +26,14 @@ Example of the Admin-File:
 
 ![adminfile](/ex1.png)
 
+Warn-Message:
+
+![warnmsg](/ex6.png)
+
+Bot Being Recognized:
+
+![botmsg](/ex8.png)
+
 # Web-Interface
 
 The Botnet has a web-interface for when the user wants to see the connections in a more simpler format. The web-interface will be able to show the connections in a table, where it is much easier to read, as well as showing information about them. In the tables, you are able to see the hostname of who is connected, the IP Address, the username of the connection, the source port(good for differentiate between duplicate connections), as well as the os. The main connections are listed in the first table, and the admin connections are listed in the second. For the SSH Connections, those are listed in the 3rd table. They will have the hostname first, then the IP Address, and finally the password of the SSH Server. Then there will be some other information about the configured variables in the Botnet. These include where the log file is located, the IP and Port used to connect to the Botnet, the admin login info, Encryption Key for encrypting files on the bots, and also the bruteforcing password-list for ssh connections. It doesn't look too great, as I am not very knowledgeable when it comes to HTML. 
@@ -57,6 +65,10 @@ Commands List:
 # Remote-Connections
 
 These are for admin connections. The admins are able to do nearly every command in the server, where they could also start DDoS Attacks and also run cmd commands remotely. When they do provide the correct username and passwords(this is explained more in the Security section), they will have access to the Botnet and all of the Bots that are connected to it. When it is connected, the admin will get sent the command list of what commands are able to be used remotely, and also how to use them. If the admin gets disconnected for some reason, they will be able to reconnect to the server rather quickly(depending on if its down or not).
+
+Admin Connection Being Announced:
+
+![adminconn](/ex7.png)
 
 # SSH-Compatibility
 
