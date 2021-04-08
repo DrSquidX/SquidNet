@@ -80,7 +80,11 @@ SSH-Password Cracked Broadcast:
 
 # Logging
 
-(Writing in progress)
+There is logging in the Botnet. This is excellent if you want to check the log for server output or any errors overall. Every message, error and command will be logged in the server log. When the server starts, the log will indicate the starting time, as well as the ip and port that it is hosted on. The log is also good for if you cleared the output of the script, but you wanted to check what was previously on the output. This is because you are able to check the logs and whatever output was on the server would have been logged in the server log. However, the web-interface errors will not appear on the server log.
+
+Examples of Output Being Logged:
+
+![output](/ex10.png)
 
 # Smart-Script-Generation
 
