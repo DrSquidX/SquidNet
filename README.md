@@ -16,7 +16,7 @@ SSH Compatability - The botnet can also take control of SSH Servers.
 
 Logging - The server is logged, and server errors can be checked there.
 
-Smart-Script-Generation - The Botnet will generate Bot and Admin scripts on command.
+Smart-Script-Generation - The Botnet will generate Bot and Admin scripts on command with the neccessary variables.
 
 # Security:
 
