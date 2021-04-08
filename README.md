@@ -4,7 +4,7 @@ A highly functional Botnet with security, powerful bot scripts, and the ability 
 # Features:
 Security - Has a Username and Password that the user is able to configure, to set up remote connections.
 
-Web-Interface - Ability to view connections and general info about the server via a webpage
+Web-Interface - Ability to view connections and general info about the server via a webpage.
 
 Option-Parsing - Re-usability and having the ability to configure the server with only one cmd command.
 
