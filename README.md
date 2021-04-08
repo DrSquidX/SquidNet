@@ -1,5 +1,5 @@
 # SquidNet
-A highly functional Botnet with security, powerful bot scripts, and the ability to set up remote access to it with admin scripts. It is mainly using TCP for regular bots, but it can use SSH when logging into SSH Servers.
+A highly functional Botnet with security, powerful bot scripts, and the ability to set up remote access to it with admin scripts along with an ugly web-interface. It is mainly using TCP for regular bots, but it can use SSH when logging into SSH Servers.
 
 # Features:
 Security - Has a Username and Password that the user is able to configure, to set up remote connections.
@@ -72,7 +72,11 @@ Admin Connection Being Announced:
 
 # SSH-Compatibility
 
-(Writing in progress)
+The Botnet is able to setup SSH Connections for SSH Bots. It can do this from either brute-forcing from a passwordlist(It's really slow, I suggest using another tool like hydra), or logging in directly with a provided password. If the SSH Credentials are able to be cracked, you are able to remotely access the SSH Server's shell and are able to run commands for it remotely at an administrative privallage. There is an additional command for if you want to inject a file to the SSH Bots, which you can get a file from the Botnet's working directory and can send it directly to the Bots via SFTP(Secure File Transfer Protocol).
+
+SSH-Password Cracked Broadcast:
+
+![sshconn](/ex9.png)
 
 # Logging
 
