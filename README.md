@@ -27,3 +27,23 @@ Example of the Admin-File:
 # Web-Interface
 
 (Writing in progress)
+
+# Option-Parsing
+
+(Writing in progress)
+
+# Bots
+
+(Writing in progress)
+
+# Remote-Connections
+
+(Writing in progress)
+
+# SSH-Compatibility
+
+(Writing in progress)
+
+# Logging
+
+(Writing in progress)
