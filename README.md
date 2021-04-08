@@ -110,6 +110,4 @@ Please do not copy this script and say that it is yours.
 
 If you plan to modify this script in anyway, please credit me.
 
-Happy Hacking,
-
 # Happy Hacking, DrSquid
