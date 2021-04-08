@@ -40,6 +40,10 @@ Help Message:
 
 ![helpmsg](/ex3.png)
 
+Example of Option-Parsing:
+
+![optparseex](/ex4.png)
+
 # Bots
 
 (Writing in progress)
