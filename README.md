@@ -28,6 +28,10 @@ Example of the Admin-File:
 
 The Botnet has a web-interface for when the user wants to see the connections in a more simpler format. The web-interface will be able to show the connections in a table, where it is much easier to read, as well as showing information about them. In the tables, you are able to see the hostname of who is connected, the IP Address, the username of the connection, the source port(good for differentiate between duplicate connections), as well as the os. The main connections are listed in the first table, and the admin connections are listed in the second. For the SSH Connections, those are listed in the 3rd table. They will have the hostname first, then the IP Address, and finally the password of the SSH Server. Then there will be some other information about the configured variables in the Botnet. These include where the log file is located, the IP and Port used to connect to the Botnet, the admin login info, Encryption Key for encrypting files on the bots, and also the bruteforcing password-list for ssh connections. It doesn't look too great, as I am not very knowledgeable when it comes to HTML. 
 
+Example of the Web-Interface:
+
+![webinterface](/ex2.png)
+
 # Option-Parsing
 
 (Writing in progress)
