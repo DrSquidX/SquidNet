@@ -112,4 +112,4 @@ If you plan to modify this script in anyway, please credit me.
 
 Happy Hacking,
 
-DrSquid
+# Happy Hacking, DrSquid
