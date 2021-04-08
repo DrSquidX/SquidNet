@@ -48,7 +48,7 @@ Example of Option-Parsing:
 
 # Bots
 
-The Bots are the computers used to connect to the server and run commands from it. These can do many things, as there are many commands in the server that can be ran in the bots. One of the main commands that it can do is that it can conduct DDoS Attacks. There are 3 types of DDoS Attacks possible with the bot script, one being an HTTP Flood attack which floods a web server with seeming legitimate HTTP Requests, which would then take the web server down and make it unavailable. Theres a TCP Flood attack that floods TCP Servers with packets, as well as a UDP Flood Attack doing similar things like the TCP Flooder. There are also custom commands that can be ran in the bots, some including google password obtaining(only for windows bots), as well as the ability to edit files remotely and also run cmd commands on the bots from the Botnet or the admins. There are many commands that are able to be used on the Bots, but I will not explain them here. For the SSH Bots, you can run cmd commands, with administrator privalleges and also able to be injected with files with SFTP, however this can only happen via the main Botnet. 
+The Bots are the computers used to connect to the server and run commands from it. These can do many things, as there are many commands in the server that can be ran in the bots. One of the main commands that it can do is that it can conduct DDoS Attacks. There are 3 types of DDoS Attacks possible with the bot script, one being an HTTP Flood attack which floods a web server with seeming legitimate HTTP Requests, which would then take the web server down and make it unavailable. Theres a TCP Flood attack that floods TCP Servers with packets, as well as a UDP Flood Attack doing similar things like the TCP Flooder. There are also custom commands that can be ran in the bots, some including google password obtaining(only for windows bots), as well as the ability to edit files remotely and also run cmd commands on the bots from the Botnet or the admins. There are many commands that are able to be used on the Bots, but I will not explain them here. For the SSH Bots, you can run cmd commands, with administrator privalleges and also able to be injected with files with SFTP, however this can only happen via the main Botnet. The bots will reconnect if they are disconnected from the Botnet.
 
 Commands List:
 
@@ -56,7 +56,7 @@ Commands List:
 
 # Remote-Connections
 
-(Writing in progress)
+These are for admin connections. The admins are able to do nearly every command in the server, where they could also start DDoS Attacks and also run cmd commands remotely. When they do provide the correct username and passwords(this is explained more in the Security section), they will have access to the Botnet and all of the Bots that are connected to it. When it is connected, the admin will get sent the command list of what commands are able to be used remotely, and also how to use them. If the admin gets disconnected for some reason, they will be able to reconnect to the server rather quickly(depending on if its down or not).
 
 # SSH-Compatibility
 
