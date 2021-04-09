@@ -98,6 +98,14 @@ Smart-Script-Generation For Bot Scripts:
 
 ![smrtbot](/ex11.png)
 
+# Reverse Shell Connection
+
+Any other commands sent to the bots that are not one of the built in functions from the Botnet will be made into shell commands. The shell commands will ran on the Bots and will send their Shell ouput back to the Botnet for the Admins and the Server to see what the output was. You can run pretty much every command there is on the Bot's OS. This allows you to basically control the Bots computer at your own will with just system/shell commands. 
+
+Picture of Reverse Shell Testing:
+
+![reverseshell](/ex13.png)
+
 # Extra Notes
 
 This script was made for educational uses only! 
