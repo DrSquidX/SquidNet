@@ -1,4 +1,6 @@
-
+"""
+THIS IS EXAMPLE CODE FOR THE ADMIN SCRIPT.
+"""
 import socket, threading, os, time, urllib.request, sys
 class BotMaster:
     def __init__(self, ip, port, name, admin_password):
