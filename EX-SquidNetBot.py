@@ -1,4 +1,6 @@
-
+"""
+THIS IS EXAMPLE CODE FOR THE BOT SCRIPT.
+"""
 #-----SquidNet-Bot-Script-----#
 import socket, time, os, threading, urllib.request, shutil, sys, random, base64, sqlite3, json
 import subprocess, re
