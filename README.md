@@ -54,7 +54,7 @@ The Botnet uses option-parsing to configure settings in the Botnet. This can inc
 
 Help Message(As of Version 6.0):
 
-![helpmsg](/ex3.png)
+![helpmsg](/ex3-69420.png)
 
 Example of Option-Parsing:
 
