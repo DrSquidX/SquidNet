@@ -66,7 +66,7 @@ The Bots are the computers used to connect to the server and run commands from i
 
 Commands List(As of Version 6.0):
 
-![cmdlist](/ex5.png)
+![cmdlist](/ex5-69420.png)
 
 # Remote-Connections
 
