@@ -52,7 +52,7 @@ The Connection Table can be Displayed when doing '!getconnlist':
 
 The Botnet uses option-parsing to configure settings in the Botnet. This can include the host IP and the host Port that the server will be hosted, as well as the admin username and the admin password(optional, as the defaults are 'admin' and 'root'). You are required to provide a password txt document if you choose to do SSH Brute-Forcing, however it is optional. If you dont't provide a password list the Botnet will function, however without the ability to use the Brute-Forcing command. If you are on a windows machine, you can get ngrok using '--gN' and it will download ngrok for windows in your current directory. You can also do '--i' for displaying the help message. You can also specify an encryption key, however there is a default key set meaning that it is optional. You are also able to specify external ip addresses and ports, if you want to.
 
-Help Message:
+Help Message(As of Version 6.0):
 
 ![helpmsg](/ex3.png)
 
