@@ -120,11 +120,11 @@ With keylogging, you are able to view the key inputs of the Bots. There is an op
 
 Picture of Keylogging being Displayed on the Server:
 
-(Picture coming soon)
+![keylogonserv](/ex15.png)
 
 Picture of Keylogging being Logged:
 
-(Picture coming soon)
+![keylogonlog](/ex16.png)
 
 # Extra Notes
 
