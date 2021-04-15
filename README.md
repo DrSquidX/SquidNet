@@ -20,6 +20,8 @@ Smart-Script-Generation - The Botnet will generate Bot and Admin scripts on comm
 
 Reverse-Shell Connection - Run CMD/Shell commands on the bot computers.
 
+Keylogging - Get the real-time key inputs of the bots.
+
 # Security
 
 The Botnet will be able to determine whether a bot is a bot or not. There is a custom command for being recognized by the botnet. If that command is not recieved, the incoming connection will be closed, and they will be kicked. If they do enter the correct command, they will be recognized as a proper client of the Botnet. If an admin is connecting to the Botnet, they will send the login command to the server, and also send the command that allows them access. They will need to enter the correct username or password, otherwise they will be kicked and the server will be warned. During password configuration(sorry for going a little off topic), the provided username will be put in a txt file, as well as the password. However, this password will first be hashed with the md5 hashing algorythm for increased security. Back to the admins connections, the username and password will be checked with the txt file with the correct credentials. The password in the command will first be hashed, and it will be checked with what is in the text file. If the username and password are correct, they will be granted access to the server.
@@ -111,6 +113,10 @@ Any other commands sent to the bots that are not one of the built in functions f
 Picture of Reverse Shell Testing:
 
 ![reverseshell](/ex13.png)
+
+# Keylogging
+
+(writing in process.)
 
 # Extra Notes
 
