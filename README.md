@@ -116,7 +116,15 @@ Picture of Reverse Shell Testing:
 
 # Keylogging
 
-(writing in process.)
+With keylogging, you are able to view the key inputs of the Bots. There is an option to not display them on output(instead being logged in the server log). Additionally, this would mean you are able to see whatever is pressed by the bot on their keyboard will be sent to the Botnet for the Server and Admins to be able to see and spy on them. This can be used to see if the Bot is entering any personal info, where the Admins and Server would be able to obtain said info and do whatever they want with it(please don't commit identity theft!).
+
+Picture of Keylogging being Displayed on the Server:
+
+(Picture coming soon)
+
+Picture of Keylogging being Logged:
+
+(Picture coming soon)
 
 # Extra Notes
 
@@ -127,6 +135,8 @@ Do not use this script for malicious uses.
 Any Damage caused by this script from other people will not be my fault.
 
 Please do not copy this script and say that it is yours. 
+
+Only use this script on people that give you their consent to test it on(make sure that they know what it is capable of). If you do not, it is considered illegal.
 
 If you plan to modify this script in anyway, please credit me.
 
