@@ -136,7 +136,9 @@ Any Damage caused by this script from other people will not be my fault.
 
 Please do not copy this script and say that it is yours. 
 
-Only use this script on people that give you their consent to test it on(make sure that they know what it is capable of). If you do not, it is considered illegal.
+Only use this script on people that give you their consent to test it on(make sure that they know what it is capable of). 
+
+If you do not, it is considered illegal.
 
 If you plan to modify this script in anyway, please credit me.
 
