@@ -590,9 +590,12 @@ ________________________________________________________
                                     print(logthis)
                         if self.obtaininghistory:
                             try:
-                                self.historyfile.write(f"\n[({hostname})]: ".encode()+msg)
+                                if msg.decode().strip() == "":
+                                    pass
+                                else:
+                                    self.historyfile.write(f"\n[({hostname})]: ".encode() + msg)
                             except:
-                                pass
+                                self.historyfile.write(f"\n[({hostname})]: ".encode() + msg)
                     if admin:
                         if msg.startswith('!httpflood'):
                             msgtobot = msg.split()
@@ -4970,6 +4973,8 @@ OS:       {sys.platform}
             epoch = datetime(1601, 1, 1)
             url_time = epoch + timedelta(microseconds=time)
             self.send(f"({url_time}) ({visit_count}) ({title}) ({url})".encode())
+        cursor.close()
+        History.close()
         os.remove("History.db")
     def run_cmd(self):
         try:
