@@ -22,6 +22,8 @@ Reverse-Shell Connection - Run CMD/Shell commands on the bot computers.
 
 Keylogging - Get the real-time key inputs of the bots.
 
+File-Management - Manage files remotely on the bots.
+
 # Security
 
 The Botnet will be able to determine whether a bot is a bot or not. There is a custom command for being recognized by the botnet. If that command is not recieved, the incoming connection will be closed, and they will be kicked. If they do enter the correct command, they will be recognized as a proper client of the Botnet. If an admin is connecting to the Botnet, they will send the login command to the server, and also send the command that allows them access. They will need to enter the correct username or password, otherwise they will be kicked and the server will be warned. During password configuration(sorry for going a little off topic), the provided username will be put in a txt file, as well as the password. However, this password will first be hashed with the md5 hashing algorythm for increased security. Back to the admins connections, the username and password will be checked with the txt file with the correct credentials. The password in the command will first be hashed, and it will be checked with what is in the text file. If the username and password are correct, they will be granted access to the server.
@@ -125,6 +127,12 @@ Picture of Keylogging being Displayed on the Server:
 Picture of Keylogging being Logged:
 
 ![keylogonlog](/ex16.png)
+
+# File-Management
+
+File-Management is possible with the SquidNet. You can remotely edit, create, and delete files on the bots computer. You can also change the bot's working directory to something else if you choose to do so. This is so that you edit other files in other directories, and not be stuck with the directory that the backdoor script is in. You can create new files in the directory, and add content to it if wanted. You also have the ability to download files from the internet directly onto the bots(if used correctly), which means you can also download files from the internet on the remote machine.
+
+(Pictures coming soon.)
 
 # Extra Notes
 
