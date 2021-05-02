@@ -1,9 +1,6 @@
 # SquidNet
 A highly functional Botnet with security, powerful bot scripts, and the ability to set up remote access to it with admin scripts along with an ugly web-interface(It still functions well though). It is mainly using TCP for regular bots, but it can use SSH when logging into SSH Servers.
 
-# Update
-Sorry for not updating. I've been working on DatCord for a bit, however I am currently switching my current password system of storing it in a txt file with md5 to a sha256 hash inside of a SQL Database. This makes things a bit faster.
-
 # Features
 Security - Has a Username and Password that the user is able to configure, to set up remote connections.
 
