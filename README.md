@@ -1,6 +1,9 @@
 # SquidNet
 A highly functional Botnet with security, powerful bot scripts, and the ability to set up remote access to it with admin scripts along with an ugly web-interface(It still functions well though). It is mainly using TCP for regular bots, but it can use SSH when logging into SSH Servers.
 
+# Update
+I'm not entirely sure what else I could add to the botnet. I need some suggestions, so contact me any new ideas if you can.
+
 # Features
 Security - Has a Username and Password that the user is able to configure, to set up remote connections.
 
