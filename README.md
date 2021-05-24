@@ -153,4 +153,4 @@ If you do not, it is considered illegal.
 
 If you plan to modify this script in anyway, please credit me.
 
-# Happy Hacking, DrSquid
+# Happy (Ethical)Hacking, DrSquid
