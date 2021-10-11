@@ -2,7 +2,7 @@
 A highly functional Botnet with security, powerful bot scripts, and the ability to set up remote access to it with admin scripts along with an ugly web-interface(It still functions well though). It is mainly using TCP for regular bots, but it can use SSH when logging into SSH Servers.
 
 # Update
-SquidNet 8.0 is the final version of SquidNet. I am currently developing SquidNet2, which will have a better more optimized server script, and you can also choose to get output from one bot at a time rather than all of them at once. Many of the features will be from the original, however some of them(such as the SSH botnet. as it overcomplicates the script and makes it unstable) will not be included. A lot of the logic used in the new SquidNet will be from my DatCord project, as DatCord is the best networking script I ghave created.
+SquidNet 8.0 is the final version of SquidNet. I am currently developing SquidNet2, which will have a better more optimized server script, and you can also choose to get output from one bot at a time rather than all of them at once. Many of the features will be from the original, however some of them(such as the SSH botnet. as it overcomplicates the script and makes it unstable) will not be included. A lot of the logic used in the new SquidNet will be from my DatCord project, as DatCord is the best networking script I have created.
 
 # Features
 Security - Has a Username and Password that the user is able to configure, to set up remote connections.
