@@ -3,6 +3,7 @@ A highly functional Botnet with security, powerful bot scripts, and the ability 
 
 # Update
 SquidNet 8.0 is the final version of SquidNet. I am currently developing SquidNet2, which will have a better more optimized server script, and you can also choose to get output from one bot at a time rather than all of them at once. Many of the features will be from the original, however some of them(such as the SSH botnet. as it overcomplicates the script and makes it unstable) will not be included. A lot of the logic used in the new SquidNet will be from my DatCord project, as DatCord is the best networking script I have created. 
+
 Here is the link to the new repository for SquidNet2: https://github.com/DrSquidX/SquidNet2
 
 # Features
