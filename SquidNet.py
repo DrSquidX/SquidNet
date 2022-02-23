@@ -8,7 +8,7 @@ from optparse import OptionParser
 """This script is NOT Perfected(Still a WIP)! Notify me if there are any 
 issues with the script! I am open for DMs but please state that are a user
 of my scripts, otherwise I will ignore you(I don't accept DMs from
-strangers). My Discord: DrSquid™#7711. If you are unable to reach me,
+strangers). My Discord: DrSquid2#7108. If you are unable to reach me,
 you can open a discussion and I will respond to that in my repository."""
 
 class ArguementParse:
