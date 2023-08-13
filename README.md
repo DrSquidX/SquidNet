@@ -2,9 +2,10 @@
 A highly functional Botnet with security, powerful bot scripts, and the ability to set up remote access to it with admin scripts along with an ugly web-interface(It still functions well though). It is mainly using TCP for regular bots, but it can use SSH when logging into SSH Servers.
 
 # Update
-SquidNet 8.0 is the final version of SquidNet. I am currently developing SquidNet2, which will have a better more optimized server script, and you can also choose to get output from one bot at a time rather than all of them at once. Many of the features will be from the original, however some of them(such as the SSH botnet. as it overcomplicates the script and makes it unstable) will not be included. A lot of the logic used in the new SquidNet will be from my DatCord project, as DatCord is the best networking script I have created. 
+SquidNet 8.0 is the final version of SquidNet. I am currently developing SquidNet2, which will have a better more optimized server script, and you can also choose to get output from one bot at a time rather than all of them at once. Many of the features will be from the original, however some of them(such as the SSH botnet. as it overcomplicates the script and makes it unstable) will not be included. A lot of the logic used in the new SquidNet will be from my DatCord project, as DatCord is the best networking script I have created (This statement is false because I found a pretty serious exploit in it lol). 
 
-Here is the link to the new repository for SquidNet2: https://github.com/DrSquidX/SquidNet2
+# 2023 Update
+Note that this script is not an actual reflection of my programming prowess; consider it more of a snapshot of the past. I've written 2 more Botnet related frameworks where one got an award for the most extensive product in a self study project in my grade. I'm debating on whether I should open-source them, but I'll most likely discuss this with my teachers. 
 
 # Features
 Security - Has a Username and Password that the user is able to configure, to set up remote connections.
